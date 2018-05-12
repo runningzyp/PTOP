@@ -1,0 +1,8 @@
+<需要在系统环境设置变量>
+
+FLASK_CONFIG
+MAIL_PASSWORD
+FLASK_ADMIN
+
+command:
+    export <var> = <var>
