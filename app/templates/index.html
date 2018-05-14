@@ -45,6 +45,8 @@
                             <div class="top-big-link">
                             	<a class="btn btn-link-1 launch-modal" href="#" data-modal-id="modal-register">OK,开始</a>
                             </div>
+
+                        
                         </div>
                     </div>
                 </div>
@@ -67,7 +69,7 @@
         			
         			<div class="modal-body">
         				
-	                    <form role="form" name= "form" action="" method="post" class="registration-form">
+	                    <form role="form" name= "form" id ="form" action="" method="post" class="registration-form">
                                 <div class="row clearfix">
                                         <div class="col-md-12 column">
                                             <div class="row clearfix">
@@ -100,13 +102,15 @@
                                                 <div class="col-md-2 column">
                                                         <div class="form-group">
                                                                 <input type="text" maxlength="1" name="six"  class="form-control" id="form-first-name" onchange="show()">
+                                                                <input type="hidden" name="ID" id= "ID">
                                                             </div>
                                                 </div>
                                                
                                             </div>
                                         </div>
                                     </div>
-                                <input type="button" value="显示" onclick="show()">
+                                     <!-- 真正提交的内容 --> 
+                                     
 	                    </form>
 	                    
         			</div>
@@ -149,7 +153,8 @@
         var str =f.one.value+f.two.value+f.three.value+
                          f.four.value+f.five.value+f.six.value;   
         if(str.length==6){
-           alert(str, str.length);
+            document.getElementById("ID").value = str;
+           document.getElementById("form").submit();
          }
         }
     </script>
