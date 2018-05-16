@@ -18,7 +18,6 @@ Mako
 MarkupSafe
 mysql-connector-python
 pep8
-pkg-resources
 protobuf
 PyMySQL
 python-dateutil
