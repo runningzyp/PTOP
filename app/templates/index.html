@@ -30,9 +30,15 @@
 
         <!-- Content -->
         <div class="top-content">
-        	
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+             {{ message }}
+            </div>
+             {% endfor %}
             <div class="inner-bg">
                 <div class="container">
+
                     <div class="row">
                         <div class="col-sm-8 col-sm-offset-2 text">
                         	<a class="logo" href="{{url_for('main.index')}}"></a>
@@ -43,7 +49,11 @@
                             	</p>
                             </div>
                             <div class="top-big-link">
-                            	<a class="btn btn-link-1 launch-modal" href="#" data-modal-id="modal-register">OK,开始</a>
+                                {% if current_user.is_authenticated %}
+                                <a class="btn btn-link-1" href=" {{url_for('main.user',username=current_user.username)}}">OK,开始</a>
+                                {% else %}
+                                <a class="btn btn-link-1 launch-modal" href="#" data-modal-id="modal-register">OK,开始</a>
+                                {% endif %}
                             </div>
 
                         
@@ -71,37 +81,37 @@
         				
 	                    <form role="form" name= "form" id ="form" action="" method="post" class="registration-form">
                                 <div class="row clearfix">
-                                        <div class="col-md-12 column">
+                                        <div class="col-md-12 col-xs-12 column">
                                             <div class="row clearfix">
 
-                                                <div class="col-md-2 column">
+                                                <div class="col-md-2 col-xs-2 column">
                                                         <div class="form-group">
-                                                             <input type="text" maxlength="1" name="one"  class="form-control" id="form-first-name" onchange="show()">
+                                                             <input type="text" style="padding: 0%" maxlength="1" name="one"  class="form-control " id="form-first-name" onchange="show()">
                                                          </div>
                                                 </div>
-                                                <div class="col-md-2 column">
+                                                <div class="col-md-2 col-xs-2 column">
                                                         <div class="form-group">
-                                                                <input type="text" maxlength="1" name="two"  class="form-control" id="form-first-name" onchange="show()">
+                                                                <input type="text" style="padding: 0%" maxlength="1" name="two"  class="form-control" id="form-first-name" onchange="show()">
                                                             </div>
                                                 </div>
-                                                <div class="col-md-2 column">
+                                                <div class="col-md-2 col-xs-2 column">
                                                         <div class="form-group">
-                                                                <input type="text"  maxlength="1" name="three"  class=" form-control" id="form-first-name" onchange="show()">
+                                                                <input type="text" style="padding: 0%" maxlength="1" name="three"  class=" form-control" id="form-first-name" onchange="show()">
                                                             </div>
                                                 </div>
-                                                <div class="col-md-2 column">
+                                                <div class="col-md-2 col-xs-2 column">
                                                         <div class="form-group">
-                                                                <input type="text" maxlength="1" name="four"  class="form-control" id="form-first-name" onchange="show()">
+                                                                <input type="text" style="padding: 0%" maxlength="1" name="four"  class="form-control" id="form-first-name" onchange="show()">
                                                             </div>
                                                 </div>
-                                                <div class="col-md-2 column">
+                                                <div class="col-md-2 col-xs-2 column">
                                                         <div class="form-group">
-                                                                <input type="text" maxlength="1" name="five"  class="form-control" id="form-first-name" onchange="show()">
+                                                                <input type="text" style="padding: 0%" maxlength="1" name="five"  class="form-control" id="form-first-name" onchange="show()">
                                                             </div>
                                                 </div>
-                                                <div class="col-md-2 column">
+                                                <div class="col-md-2 col-xs-2 column">
                                                         <div class="form-group">
-                                                                <input type="text" maxlength="1" name="six"  class="form-control" id="form-first-name" onchange="show()">
+                                                                <input type="text" style="padding: 0%" maxlength="1" name="six"  class="form-control" id="form-first-name" onchange="show()">
                                                                 <input type="hidden" name="ID" id= "ID">
                                                             </div>
                                                 </div>
