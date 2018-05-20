@@ -19,7 +19,7 @@ def index():
         print(user)
         if user is not None:
             login_user(user, True)
-            return redirect(url_for('main.user', username=user.username))
+            return redirect(request.args.get('next')or url_for('main.user', username=user.username))
         flash('请输入正确的令牌')
     return render_template('index.html')
 
@@ -28,18 +28,28 @@ def index():
 @login_required
 def userlogout():
     logout_user()
-    return redirect(url_for('.index'))
+    return redirect(url_for('main.index'))
 
 
 @main.route('/user/<username>', methods=['GET', 'POST'])
+@login_required
 def user(username):
     user = User.query.filter_by(username=username).first()
+    if username != current_user.username:
+        return render_template('404.html'), 404
     if request.method == 'POST':
         text = request.form.get('text')
         data = Data(text=text,
                     author=current_user._get_current_object())
         db.session.add(data)
-        return redirect(url_for('.user', username=username))
+        return redirect(url_for('.user', username=current_user.username))
 
     data = user.data.order_by(Data.timestamp.asc()).all()
     return render_template('user.html', data=data, user=user)
+
+
+# 未登录用户无法访问
+@main.route('/secret')
+@login_required
+def secret():
+    return 'you can'

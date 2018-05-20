@@ -8,30 +8,9 @@
 <link rel="icon" href="{{ url_for('static', filename='my.ico') }}" type="image/x-icon">
 
 {% endblock %}
-{% block body %}
- <!--  <body style="background-color:cyan">-->
- <!--<body style="background: linear-gradient(to right, #B3FFAB ,#12FFF7 );">-->
-<!--<body style="background: linear-gradient(#355C7D, #6C5B7B,rgb(3, 12, 20));">-->
-<body style="background: linear-gradient(#44A08D,#093637);">
+
 {% block navbar %}
-<div class="navbar navbar-inverse " style="background-color: transparent;border-color: transparent" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">啦啦</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index') }}">Home</a></li>
-                <li><a href="{{url_for('main.userlogout')}}">退出登录</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+
 {% endblock %}
 
 {% block content %}
@@ -46,8 +25,7 @@
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
-</body>
-{% endblock %}
+
 
 {% block scripts %}
 {{ super() }}

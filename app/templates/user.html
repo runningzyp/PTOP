@@ -3,17 +3,31 @@
 {% block title %}{{current_user.username}}的{% endblock %}
 {% block head %}
 {{super()}}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/poststyles.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/windowstyles.css') }}">
 {% endblock %}
 {% block page_content %}
 
 <div class="row clearfix">
-		<div class="col-md-12 column">
+		<div class="col-md-12 col-xs-12 column">
                 <div class="window">
                     <div class="row clearfix">
-                        <div class="col-md-12 column">
+                        <div class="col-md-12 col-xs-12 column">
                             <div class="window-head">
-                                   <div class="window-head-title">欢迎使用,{{current_user.username}}</div>
+                                <div class="row clearfix">
+                                        <div class="col-md-1 col-xs-2 column">
+                                            <a href="{{url_for('main.userlogout')}}">
+                                                 <span class="glyphicon glyphicon-remove" style="font-size: 5px;color:rgb(248, 248, 248);top:1em;left:1.5em;" ></span>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-10 col-xs-8 column">
+                                            <div class="window-head-title">欢迎使用,{{current_user.username}}</div>
+                                        </div>
+                                        <div class="col-md-1 col-xs-2 column">
+                                            <a href="#">
+                                                <span class="glyphicon glyphicon-user" style="font-size: 2em;color:rgb(248, 248, 248);top:10px;" ></span>
+                                              </a>
+                                        </div>
+                                </div>                                
                              </div>
                         </div>
                     </div>
@@ -24,14 +38,14 @@
                                         {% for dat in data %}
                                           <div class="window-show-line">
                                                <div class="row clearfix">
-                                                       <div class="col-md-1 column">
+                                                       <div class="col-md-1 col-xs-2 column">
                                                                <a href="{{url_for('.user',username=dat.author.username)}}">
-                                                                   <img class="profile-thumbnail"  src="{{ url_for('static', filename='web.png') }}">
+                                                                   <img class="profile-thumbnail"  src="{{ url_for('static', filename='ico/web.png') }}">
                                                                </a>                                                            
                                                        </div>
-                                                       <div class="col-md-7 column">
+                                                       <div class="col-md-7 col-xs-8 column">
                                                            <div class="window-show-data">
-                                                           <div class="post-date">{{dat.timestamp}}</div>
+                                                           <!-- <div class="post-date">{{dat.timestamp}}</div> -->
                                                            <div class="post-body">{{dat.text}}</div>
                                                         </div>
                                                        </div>
@@ -52,28 +66,28 @@
                              <form  name= "form" id ="form" action="" method="post">
                             <div class="window-foot">
                                 <div class="row clearfix">
-                                        <div class="col-md-12 column">
+                                        <div class="col-xs-12 column">
                                         <div class="foot-first">
                                           <div class="row clearfix">
-                                                <div class="col-md-10 column">
+                                                <div class="col-xs-10 column" style="padding-right: 0">
                                                     <input type="text" class="window-input" name="text" id= "text">
                                                     </div>
-                                                <div class="col-md-2 column">
+                                                <div class="col-xs-2 column" style="padding-left: 0">
                                                     <div class="window-submit">
-                                                     <button type="submit" class="btn btn-default btn-block btn-primary">Submit</button>
+                                                     <button type="submit" class="btn btn-default btn-block btn-primary">提交 </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                 </div>
                                 <div class="row clearfix">
-                                        <div class="col-md-12 column">
+                                        <div class="col-md-12 col-xs-12 column">
                                             <div class="foot-second">
                                                    <div class="row clearfix">
-                                                        <div class="col-md-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/1.png') }}"> </div>
-                                                        <div class="col-md-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/2.png') }}"></div>
-                                                        <div class="col-md-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/3.png') }}"></div>
-                                                        <div class="col-md-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/4.png') }}"></div>
+                                                        <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/1.png') }}"> </div>
+                                                        <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/2.png') }}"></div>
+                                                        <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/3.png') }}"></div>
+                                                        <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/4.png') }}"></div>
                                                     </div>                                             
                                             </div>
                                         </div>
