@@ -1,6 +1,6 @@
 from flask import render_template, session, redirect, url_for, current_app
 from flask import request, flash
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required, login_manager, current_user
 from .. import db
 from ..models import User, Data
 from ..email import send_email
@@ -19,7 +19,8 @@ def index():
         print(user)
         if user is not None:
             login_user(user, True)
-            return redirect(request.args.get('next')or url_for('main.user', username=user.username))
+            return redirect(request.args.get('next')or
+                            url_for('main.user', username=user.username))
         flash('请输入正确的令牌')
     return render_template('index.html')
 

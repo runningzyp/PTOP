@@ -13,6 +13,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'main.index'
+login_manager.login_message = "请登录后 访问此页."
 
 
 def create_app(config_name):
