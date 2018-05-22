@@ -47,6 +47,11 @@ body{
         background-color:#25b6ed;/*#00aeef*/
         border-radius:0 0 0 0;
     }
+    .window-hidden{  
+       
+        border-radius: 0 0 0 0;
+
+    }
     
 }
 
@@ -119,8 +124,27 @@ body{
     height: 150px;
     bottom: -150px;
     background-color: red!important;
-    border-radius: 0 0 20px 20px;
     display:none;
+}
+.Aqua{
+    position: relative;
+    width:150px;
+    height:150px;
+    float: right;
+}
+.aqua-left{
+    position: absolute;
+    width:20%;
+    height: 100%;
+    float: right;
+    border: red 2px;
+}
+.aqua-right{
+    position: absolute;
+    width:80%;
+    height: 100%;
+    right: 0;
+    border: yellow 2px;
 }
 .move{
     position: relative;

@@ -81,7 +81,15 @@
             </form>
         </div>
         <div class="window-hidden" >
-                hello
+            <div class="Aqua">
+                <div class="aqua-left">
+                    <img class="img-responsive"  src="{{ url_for('static', filename='img/backgrounds/box.png') }}">
+                </div>
+                <div class="aqua-right">
+                    <img class="img-responsive"  src="{{ url_for('static', filename='img/backgrounds/Aqua_nobox.png') }}">
+                 </div>
+               
+            </div>
             </div>
        
         </div> <!-- move -->
@@ -94,14 +102,17 @@
            $(".move").animate({bottom:'150px'});
           });
          
+          
 
            $(".window-show").click(function(e){
+         
          var target = $(e.target);
          if(!target.is('.foot-second')){
             $(".move").animate({bottom:'0px'});
          }})
         });
-      
+        
+        
       
         </script>
     {% endblock %}
