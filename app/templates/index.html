@@ -52,7 +52,7 @@
                                 {% if current_user.is_authenticated %}
                                 <a class="btn btn-link-1" href=" {{url_for('main.user',username=current_user.username)}}">OK,开始</a>
                                 {% else %}
-                                <a class="btn btn-link-1 launch-modal" href="#" data-modal-id="modal-register">OK,开始</a>
+                                <a class="btn btn-link-1 launch-modal" data-modal-id="modal-register">OK,开始</a>
                                 {% endif %}
                             </div>
 

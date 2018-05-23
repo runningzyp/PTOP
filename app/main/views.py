@@ -19,8 +19,7 @@ def index():
         print(user)
         if user is not None:
             login_user(user, True)
-            return redirect(request.args.get('next')or
-                            url_for('main.user', username=user.username))
+            return redirect(url_for('main.user', username=user.username))
         flash('请输入正确的令牌')
     return render_template('index.html')
 
