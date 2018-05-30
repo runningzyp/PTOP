@@ -32,6 +32,10 @@ class Data(db.Model):
     __tablename__ = 'data'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
+    filename = db.Column(db.String(128), default=None)
+    sec_filename = db.Column(db.String(128), default=None)
+    filetype = db.Column(db.String(10), default=None)
+    device_type = db.Column(db.String(10), default=None)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

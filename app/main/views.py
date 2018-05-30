@@ -6,6 +6,13 @@ from ..models import User, Data
 from ..email import send_email
 from . import main
 from .forms import NameForm
+from flask import send_from_directory  # 文件下载
+from flask import jsonify
+import datetime
+from werkzeug import secure_filename  # 安全的文件名
+
+import os
+UPLOAD_FOLDER = os.getcwd() + "/app/static/files/"
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -37,18 +44,32 @@ def user(username):
     user = User.query.filter_by(username=username).first()
     if username != current_user.username:
         return render_template('404.html'), 404
-    if request.method == 'POST':
-        text = request.form.get('text')
-        data = Data(text=text,
-                    author=current_user._get_current_object())
-        db.session.add(data)
-        return redirect(url_for('.user', username=current_user.username))
 
     data = user.data.order_by(Data.timestamp.asc()).all()
     return render_template('user.html', data=data, user=user)
 
 
+@main.route('/_send')
+@login_required
+def send():
+    text = request.args.get('text', '')
+    device_type = request.args.get('device_type', '')
+    if text is not None:
+        data = Data(text=text, device_type=device_type,
+                    author=current_user._get_current_object())
+        db.session.add(data)
+    return jsonify(text=text)
+
+
+@main.route('/uploads/<filename>')
+@login_required
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER,
+                               filename)
+
 # 未登录用户无法访问
+
+
 @main.route('/secret')
 @login_required
 def secret():

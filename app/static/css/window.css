@@ -84,6 +84,12 @@ body{
     margin:10px; 
     min-height: 5em;
 }
+.window-hide-line{
+    display:none;
+    margin:10px; 
+    min-height: 5em;
+  
+}
 .window-show-data{
     margin-top: 5px;
     border:2px solid #00aeef;
