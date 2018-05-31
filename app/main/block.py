@@ -17,33 +17,46 @@ if request.method == 'POST':
             file = None
 
 
+$('#file-submit').click(function(), {  // 等于按钮
+    $.getJSON($SCRIPT_ROOT + '/_sendfile', {
+      file: $('#file').val(),
+      device_type: 'web'
+    }, function(data) {
+        $("input[name='text']").val("").focus();
+        $(".window-show").append($add_text);
+        $(".window-hide-line").show(1000);
+        $('.window-show').scrollTop( $('.window-show')[0].scrollHeight );
+    });
+  });
+
+
+@main.route('/_sendfile')
+@login_required
+def sendfile():
+    file = request.args.get('file', '')
+    device_type = request.args.get('device_type', '')
+    dt = datetime.datetime.utcnow()
+    if file is not None:
+        filename = file.filename
+        file.save(os.path.join(UPLOAD_FOLDER, filename))
+        data = Data(filename=filename, device_type=device_type,
+                    author=current_user._get_current_object())
+        db.session.add(data)
+    return jsonify(text=text)
 
 
 
 
 
-
-
-  $(".window-show").append(
-        <div class="window-show-line">
-                               <div class="row clearfix">
-                                       <div class="col-md-1 col-xs-2 column" style="padding-left:15px;padding-right: 0;">
-                                               <a href="{{url_for('.user',username=current_user.username)}}">
-                                                   <img class="profile-thumbnail img-responsive" src="{{ url_for('static', filename='ico/web.png') }}">
-                                               </a>                                                            
-                                       </div>
-                                      
-                                       <div class="col-md-7 col-xs-8 column" style="padding-left:0px;" >
-                                           
-                                           <div class="window-show-data">                            
-                                          
-                                           </div>
-                                        
-                                       </div>
-                                       <div class="col-md-3 column">
-                                       </div>
-                                       <div class="col-md-1 column">
-                                       </div>
-                               </div>
-                            </div>
-            
+  $('#file-submit').click(function() {  // 等于按钮
+    var formData = new FormData($('#uploadForm')[0]);
+    $.getJSON($SCRIPT_ROOT + '/_send', {
+      file: formData
+      device_type: 'web'
+    }, function(data) {
+        $("input[name='text']").val("").focus();
+        $(".window-show").append($add_text);
+        $(".window-hide-line").show(1000);
+        $('.window-show').scrollTop( $('.window-show')[0].scrollHeight );
+    });
+})

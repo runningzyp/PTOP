@@ -49,16 +49,38 @@ def user(username):
     return render_template('user.html', data=data, user=user)
 
 
-@main.route('/_send')
+@main.route('/_sendmessage')
 @login_required
-def send():
+def sendmessage():
     text = request.args.get('text', '')
     device_type = request.args.get('device_type', '')
     if text is not None:
         data = Data(text=text, device_type=device_type,
                     author=current_user._get_current_object())
         db.session.add(data)
-    return jsonify(text=text)
+    return jsonify(result='success')
+
+
+@main.route('/_sendfile', methods=['GET', 'POST'])
+@login_required
+def sendfile():
+    if request.method == "POST":
+        try:
+            dt = datetime.datetime.utcnow()
+            sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
+            file = request.files['file']
+            device_type = request.args.get('device_type', '')
+            filename = file.filename
+            sec_filename = '['+sec_key + ']' + filename
+            persional_folder = UPLOAD_FOLDER
+            file.save(os.path.join(persional_folder, sec_filename))
+            data = Data(filename=filename, sec_filename=sec_filename,
+                        device_type=device_type,
+                        author=current_user._get_current_object())
+            db.session.add(data)
+        except:
+            file = None
+        return jsonify({'name': filename, 'url': sec_filename})
 
 
 @main.route('/uploads/<filename>')
