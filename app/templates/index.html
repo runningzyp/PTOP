@@ -9,7 +9,7 @@
         <title>一个耿直的网站</title>
 
         <!-- CSS -->
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
         <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../static/css/form-elements.css">
         <link rel="stylesheet" href="../static/css/style.css">
@@ -52,7 +52,7 @@
                                 {% if current_user.is_authenticated %}
                                 <a class="btn btn-link-1" href=" {{url_for('main.user',username=current_user.username)}}">OK,开始</a>
                                 {% else %}
-                                <a class="btn btn-link-1 launch-modal" data-modal-id="modal-register">OK,开始</a>
+                                <a class="btn btn-link-1 launch-modal" data-modal-id="modal-login">OK,开始</a>
                                 {% endif %}
                             </div>
 
@@ -65,7 +65,7 @@
         </div>
         
         <!-- MODAL -->
-        <div class="modal fade" id="modal-register" tabindex="-1" role="dialog" aria-labelledby="modal-register-label" aria-hidden="true">
+        <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-labelledby="modal-login-label" aria-hidden="true">
         	<div class="modal-dialog">
         		<div class="modal-content">
         			
@@ -73,53 +73,25 @@
         				<button type="button" class="close" data-dismiss="modal">
         					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
         				</button>
-        				<h3 class="modal-title" id="modal-register-label">立即登录</h3>
+        				<h3 class="modal-title" id="modal-login-label">立即登录</h3>
         				<p>填写下面的表格即可访问：</p>
         			</div>
         			
-        			<div class="modal-body">
+        			<div class="modal-body" id ="main-body">
         				
 	                    <form role="form" name= "form" id ="form" action="" method="post" class="registration-form">
-                                <div class="row clearfix">
-                                        <div class="col-md-12 col-xs-12 column">
-                                            <div class="row clearfix">
-
-                                                <div class="nopad col-md-2 col-xs-2 column">
-                                                        <div class="form-group">
-                                                             <input type="text"  maxlength="1" name="one"  class="form-control " id="form-first-name" onchange="show()">
-                                                         </div>
-                                                </div>
-                                                <div class="nopad col-md-2 col-xs-2 column">
-                                                        <div class="form-group">
-                                                                <input type="text"  maxlength="1" name="two"  class="form-control" id="form-first-name" onchange="show()">
-                                                            </div>
-                                                </div>
-                                    
-                                                <div class="nopad col-md-2 col-xs-2 column">
-                                                        <div class="form-group">
-                                                                <input type="text" maxlength="1" name="three"  class="form-control" id="form-first-name" onchange="show()">
-                                                            </div>
-                                                </div>
-                                                <div class="nopad col-md-2 col-xs-2 column">
-                                                        <div class="form-group">
-                                                                <input type="text"  maxlength="1" name="four"  class="form-control" id="form-first-name" onchange="show()">
-                                                            </div>
-                                                </div>
-                                                <div class="nopad col-md-2 col-xs-2 column">
-                                                        <div class="form-group">
-                                                                <input type="text"  maxlength="1" name="five"  class="form-control" id="form-first-name" onchange="show()">
-                                                            </div>
-                                                </div>
-                                                <div class="nopad col-md-2 col-xs-2 column">
-                                                        <div class="form-group">
-                                                                <input type="text"  maxlength="1" name="six"  class="form-control" id="form-first-name" onchange="show()">
-                                                                <input type="hidden" name="ID" id= "ID">
-                                                            </div>
-                                                </div>
-                                               
-                                            </div>
-                                        </div>
-                                    </div>
+                                                                                               
+                                                            <input type="text"  maxlength="1" id="one" style="left: 0%;" class="form-style" required>
+                                                                                                                                                                   
+                                                            <input type="text" maxlength="1" id="two"  style="left: 17%;" class="form-style" required>                                                         
+                                                                                                 
+                                                            <input type="text" maxlength="1" id="three" style="left: 34%;"  class="form-style " required>                                                                          
+                                                            <input type="text"  maxlength="1" id="four" style="left: 51%;" class="form-style " required>
+                                                            <input type="text"  maxlength="1" id="five" style="left: 68%;" class="form-style " required>
+                                                            <input type="text"  maxlength="1" id="six" style="left: 85%;" class="form-style " required>
+                                                            <input type="hidden" name="ID" id= "ID">
+                                                                                                                             
+                               
                                      <!-- 真正提交的内容 --> 
                                      
 	                    </form>
@@ -140,34 +112,34 @@
         <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>
         <![endif]-->
-
-    </body>
-    <script>
-        var demo=document.getElementById('modal-register');
-        var str='';
-        input=demo.getElementsByTagName('input');
-        var iNow=0;
-        type   = !-[1,] ? 'onpropertychange' : 'oninput',
-                limit  = 1; //满足自动切换焦点的字符数
-        for(var i=0;i<input.length-1;i++){
-            input[i].index=i;
-            input[i][type]=function () {
-                iNow=this.index;
-                var that=this;
-                setTimeout(function () {
-                   that.value.length>limit-1&&input[iNow+1].focus();
-                },0)
-            }
-        }
-        function show(){
+<script>
+    $("input").change(function () {
         var f=form;
         var str =f.one.value+f.two.value+f.three.value+
                          f.four.value+f.five.value+f.six.value;   
         if(str.length==6){
             document.getElementById("ID").value = str;
            document.getElementById("form").submit();
-         }
         }
-    </script>
+    });
+</script>
+<style type="text/css">  
+.form-style{
+    position: absolute;
+    width: 15%;
+}
+/* #form input:not(:first-child){
+    margin-left: 1.5% 
+} */
+.registration-form{
+    position: relative;
+    width: 100%;
+    height: 50px;
+}
+
+</style>
+
+    </body>
+    
 
 </html>

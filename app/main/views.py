@@ -6,14 +6,23 @@ from .. import db
 from ..models import User, Data
 from ..email import send_email
 from . import main
+from .. import auth
 from .forms import NameForm
 from flask import send_from_directory  # 文件下载
 from flask import jsonify
 import datetime
 from werkzeug import secure_filename  # 安全的文件名
+from . import send_key
+import json
+
+
+from aliyunsdkcore import client
+from aliyunsdksts.request.v20150401 import AssumeRoleRequest
+import oss2
+
 
 import os
-UPLOAD_FOLDER = os.getcwd() + "/app/static/files/"
+UPLOAD_FOLDER = os.getcwd() + "/files/"
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -65,6 +74,7 @@ def sendmessage():
 @main.route('/_sendfile', methods=['GET', 'POST'])
 @login_required
 def sendfile():
+
     if request.method == "POST":
         try:
             dt = datetime.datetime.utcnow()
@@ -73,7 +83,10 @@ def sendfile():
             device_type = request.args.get('device_type', '')
             filename = file.filename
             sec_filename = '['+sec_key + ']' + filename
-            persional_folder = UPLOAD_FOLDER
+
+            user = User.query.filter_by(username=current_user.username).first()
+            persional_folder = UPLOAD_FOLDER+user.email
+            print(persional_folder)
             file.save(os.path.join(persional_folder, sec_filename))
             data = Data(filename=filename, sec_filename=sec_filename,
                         device_type=device_type,
@@ -87,10 +100,31 @@ def sendfile():
 @main.route('/uploads/<filename>')
 @login_required
 def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER,
+    user = User.query.filter_by(username=current_user.username).first()
+    persional_folder = UPLOAD_FOLDER+user.email
+    return send_from_directory(persional_folder,
                                filename)
 
+
+@main.route('/test', methods=['GET', 'POST'])
+def test():
+    access_key_id = 'LTAInn4CiOcTMupp'
+    access_key_secret = 'YNHxZ7QdZ160zmMO0kmLu2QJ6MtA3A'
+    bucket_name = 'zhanyunpeng1995'
+    endpoint = 'oss-cn-shanghai.aliyuncs.com'
+    sts_role_arn = 'acs:ram::1158764349830607:role/oss-scaner'
+    token = send_key.fetch_sts_token(
+        access_key_id, access_key_secret, sts_role_arn)
+    print(token.access_key_id)
+    print(token.access_key_secret)
+    print(token.security_token)
+    return 'hello'
 # 未登录用户无法访问
+
+
+@main.route('/register')
+def turn():
+    return redirect(url_for('auth.register'))
 
 
 @main.route('/secret')

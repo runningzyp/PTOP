@@ -1,14 +1,11 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}{{current_user.username}}的{% endblock %}
 {% block head %}
 {{super()}}
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Page Title</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="shortcut icon" href="{{ url_for('static', filename='my.ico') }}" type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename='my.ico') }}" type="image/x-icon">
 <link rel="stylesheet" type="text/css"  href="{{url_for('static',filename='css/window.css')}}">
 {% endblock %}
 
@@ -81,12 +78,12 @@
                           </div>
                 </div>
                 <div class="foot-second">
-                        <div class="row clearfix">
+                      <!--  <div class="row clearfix">
                                 <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/1.png') }}"> </div>
                                 <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/2.png') }}"></div>
                                 <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/3.png') }}"></div>
                                 <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/4.png') }}"></div>
-                        </div>                                             
+                        </div>  -->                                           
                 </div>
          </form>
         </div>
@@ -184,7 +181,7 @@ $.ajax({
                     '<div class="col-md-7 col-xs-8 column" style="padding-left:0px;">'+
 
                         '<div class="window-show-data">'+
-                        '<a href =\"'+ '/uploads/'+ $file_url+  '\" >'+ $file_name +'<\/a>'+
+                        '<a href =\"'+ '/uploads/'+ $file_url+  '\"'+ 'target='+'\"'+'_blank'+'\"'+ '>'+ $file_name +'<\/a>'+
                         '</div>'+
 
                     '</div>'+
