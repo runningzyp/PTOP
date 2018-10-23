@@ -15,6 +15,7 @@ class Config:
     FLASKY_MAIL_SENDER = 'zhanyunpeng1996@163.com'
     FLASKY_ADMIN = os.environ.get('FLASK_ADMIN')
     UPLOAD_FOLDER = os.getcwd() + "/files/"  # 用户上传目录
+    FLASKY_ARTICLE_PER_PAGE = 4
 
     @staticmethod
     def init_app(app):
@@ -27,7 +28,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
         os.path.join(basedir, 'data-dev.sqlite')
     '''
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:1996@localhost/dev'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:zhan@1996@localhost/dev?charset=utf8mb4'
 
 
 class TestingConfig(Config):
@@ -37,8 +38,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:zhan@1996@localhost/dev?charset=utf8mb4'
 
 
 config = {

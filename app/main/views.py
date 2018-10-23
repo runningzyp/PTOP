@@ -3,18 +3,18 @@ from flask import request, flash
 from flask_login import login_user, logout_user, login_required, login_manager
 from flask_login import current_user
 from .. import db
-from ..models import User, Data
+from ..models import User, Data, Article, ArticleType
 from ..email import send_email
 from . import main
 from .. import auth
-from .forms import NameForm
+from .form import ArticleForm
 from flask import send_from_directory  # 文件下载
 from flask import jsonify
 import datetime
 from werkzeug import secure_filename  # 安全的文件名
 from . import send_key
 import json
-
+from ..decorators import admin_required
 
 from aliyunsdkcore import client
 from aliyunsdksts.request.v20150401 import AssumeRoleRequest
@@ -35,10 +35,59 @@ def index():
         user = User.query.filter_by(userkey=userkey).first()
         print(user)
         if user is not None:
-            login_user(user, True)
+            login_user(user, True)  # true 记住用户
             return redirect(url_for('main.user', username=user.username))
         flash('请输入正确的令牌')
     return render_template('index.html')
+
+
+@main.route('/write-blog', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def write_blog():
+    form = ArticleForm()
+    if form.validate_on_submit():
+        article = Article(
+            body=form.body.data, title=form.title.data,
+            article_type_id=int(form.article_id.data))
+        db.session.add(article)
+        return redirect(url_for('.blogs'))
+    return render_template('wirte_blog.html', form=form)
+
+
+@main.route('/blogs')
+def blogs():
+    # flash('请输入正确的令牌')
+    # articles = Article.query.order_by(Article.timestamp.desc()).all()
+    essay_s = Article.query.filter_by(article_type_id='2').order_by(
+        Article.timestamp.desc()).all()
+    funny_s = Article.query.filter_by(article_type_id='3').order_by(
+        Article.timestamp.desc()).all()
+    study_s = Article.query.filter_by(article_type_id='1').order_by(
+        Article.timestamp.desc()).all()
+    article_essay = []
+    article_funny = []
+    article_study = []
+    articles = [article_essay, article_funny, article_study]
+    count_1 = Article.query.filter_by(article_type_id='2').count()
+    count_2 = Article.query.filter_by(article_type_id='3').count()
+    count_3 = Article.query.filter_by(article_type_id='1').count()
+
+    for i in range(0, count_1, 4):
+        article_essay.append(essay_s[i:i+4])
+    for i in range(0, count_2, 4):
+        article_funny.append(funny_s[i:i+4])
+    for i in range(0, count_3, 4):
+        article_study.append(study_s[i:i+4])
+    return render_template('blogs.html', article_essay=article_essay,
+                           article_funny=article_funny,
+                           article_study=article_study)
+
+
+@main.route('/blog/<int:id>')
+def blog(id):
+    blog = Article.query.get_or_404(id)
+    return render_template('blog.html', blog=blog)
 
 
 @main.route('/userlogout')
@@ -106,6 +155,7 @@ def uploaded_file(filename):
                                filename)
 
 
+@login_required
 @main.route('/test', methods=['GET', 'POST'])
 def test():
     access_key_id = 'LTAInn4CiOcTMupp'

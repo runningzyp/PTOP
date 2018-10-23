@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}正在编辑...{% endblock %}
+{% block head %}
+
+{{ super() }}
+<link rel="stylesheet" href="{{url_for('static',filename='css/editormd.min.css')}}">
+{% endblock %}
+
+{% block page_content %}
+<div class = "row clearfix" >
+		<div class = "col-md-12 column" >
+		</div>
+    </div>
+
+<div class="row clearfix">
+    <div class="col-md-2 column">
+    </div>
+    <div class="col-md-8 column">
+        <div class="jumbotron">
+                <form method="post">
+                        {{form.hidden_tag()}}
+                        <div id="blog-editormd" class="form-control">
+                            {{form.body(class="form-control",required="required",style="display:none;",id="ts")}}
+                        </div>
+                {{ wtf.form_field(form.title,class= "form-control") }}
+                {{ wtf.form_field(form.article_id,class= "form-control") }}
+
+                     <button type="submit" class="btn btn-primary form-control">提交</button>
+                    </form>  
+        </div>
+    </div>
+    <div class="col-md-2 column">
+    </div>
+</div>
+{% endblock %}
+
+
+{%block scripts%}
+{{super()}}
+    <script src="{{url_for('static',filename='js/editormd.min.js')}}"></script>
+
+    <script>
+            var BlogEditor;
+            $(function(){
+                BlogEditor=editormd("blog-editormd",{
+                    width:$(".jumbotron").width,
+                    height:$(".jumbotron").height,
+                    syncScrolling : "single",
+                    path:"{{url_for('static',filename='editormd/lib/')}}",
+                    //启动本地图片上传功能
+                    imageUpload:true,
+                    imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                });
+            })
+    </script>
+{% endblock %}

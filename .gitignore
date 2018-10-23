@@ -1,3 +1,4 @@
+
 # Python:
 *.py[cod]
 *.so
@@ -9,5 +10,7 @@ build
 __pycache__/
 *.pyc
 venv
-files/*
-!files/readme.md
+/files/*
+!/files/readme.md
+.DS_Store
+/.idea

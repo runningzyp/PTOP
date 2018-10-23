@@ -1,8 +1,12 @@
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash
+from flask import redirect, url_for
+from flask_login import login_user
 from .import auth
+from .forms import RegisterForm, LoginForm
 from .. import db
 from ..models import User
 from random import Random
+
 import os
 UPLOAD_FOLDER = os.getcwd() + "/files/"
 
@@ -19,27 +23,33 @@ def random_str(randomlength=6):
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        sel = User.query.filter_by(email=email).first()
-        if sel is not None:
-            print('存在')
-            flash('该用户已被注册')
-            return redirect(url_for('auth.register'))
+    form = RegisterForm()
+    if form.validate_on_submit():
         while (True):
             userkey = random_str(6)
             user = User.query.filter_by(userkey=userkey).first()
             if user is None:
                 break
-        newuser = User(userkey=userkey, username=username,
-                       password=password, email=email)
+        newuser = User(userkey=userkey, username=form.username.data,
+                       password=form.password.data, email=form.email.data)
         db.session.add(newuser)
-        path = UPLOAD_FOLDER + email
+        path = UPLOAD_FOLDER + newuser.email
         print(path)
-        if (not os.path.exists(path)):
+        if os.path.exists(path) is False:
             os.makedirs(path)
         return render_template('auth/success.html', userkey=userkey)
-    return render_template('auth/register.html')
+    return render_template('auth/register.html', form=form)
+
+
+@auth.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(
+            email=form.email.data, password=form.password.data).first()
+        print(user)
+        if user is not None:
+            login_user(user, form.remember_me.data)
+            return redirect(request.args.get('next')or url_for('main.index'))
+        flash('禁止登录')
+    return render_template('auth/admin_login.html', form=form)

@@ -3,5 +3,19 @@
 {% block title %}成功{% endblock %}
 
 {% block content %}
-<p>你的验证用户令牌是{{userkey}}</p>
+<div class="row clearfix">
+		<div class="col-md-2 column">
+		</div>
+		<div class="col-md-8 column">
+                <h3>
+                     请牢记,您的验证用户令牌是
+                </h3>
+                <div class="jumbotron">
+                    <h1 style="text-align: center"> {{userkey}} </h1>
+                </div>  
+        </div>
+		<div class="col-md-2 column">
+		</div>
+	</div>
+
 {% endblock %}
