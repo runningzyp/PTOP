@@ -130,29 +130,30 @@ class Article(db.Model):
                 'img': ['src', 'alt'],  # 支持<img src …>标签和属性
             }
         ))
+    '''
+    @staticmethod
+    def generate_fake(count=100):
+        
+        # 测试数据,生产环境不需要
+        
+        from random import seed
+        from random import randint
+        import forgery_py
+
+        seed()
+        for i in range(count):
+            a = Article(title=forgery_py.lorem_ipsum.title(),
+                        body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                        timestamp=forgery_py.date.date(True),
+                        article_type_id=randint(1, 3),
+                        body_html=None
+                        )
+            db.session.add(a)
+            db.session.commit()
+    '''
 
 
 db.event.listen(Article.body, 'set', Article.on_changed_body)
-
-
-@staticmethod
-def generate_fake(count=100):
-    '''
-    测试数据,生产环境不需要
-    '''
-    from random import seed
-    from random import randint
-    import forgery_py
-
-    seed()
-    for i in range(count):
-        a = Article(title=forgery_py.lorem_ipsum.title(),
-                    body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                    timestamp=forgery_py.date.date(True),
-                    article_type_id=randint(1, 3)
-                    )
-        db.session.add(a)
-        db.session.commit()
 
 
 class ArticleType(db.Model):

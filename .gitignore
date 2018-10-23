@@ -14,3 +14,4 @@ venv
 !/files/readme.md
 .DS_Store
 /.idea
+migrations/
