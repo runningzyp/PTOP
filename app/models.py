@@ -119,10 +119,13 @@ class Article(db.Model):
     def on_changed_body(target, value, oldvalue, initiaor):
         allow_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                       'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                      'h1', 'h2', 'h3', 'p', 'img', 'br']
+                      'h1', 'h2', 'h3', 'p', 'img', 'br', 'table', 'tr', 'td']
         # 转换markdown为html，并清洗html标签
         target.body_html = bleach.linkify(bleach.clean(
-            markdown(value, output_form='html'),
+            markdown(value,
+                     extensions=['markdown.extensions.toc',
+                                 'markdown.extensions.tables'],
+                     output_form='html'),
             tags=allow_tags, strip=True,
             attributes={
                 '*': ['class'],

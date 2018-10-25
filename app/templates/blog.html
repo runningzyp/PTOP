@@ -1,18 +1,65 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% block title %}正在编辑...{% endblock %}
+{% block head %}
+
+{{ super() }}
+<link rel="stylesheet" href="{{url_for('static',filename='css/editormd.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static',filename='css/editormd.preview.css')}}">
+<style>
+#blog-editormd-view{
+    background-image: url('../static/img/blog_image/blog_back.jpg')
+}
+
+</style>
+{% endblock %}
+
 {% block page_content %}
 <div class="row clearfix">
-		<div class="col-md-12 column">
-			<div class="jumbotron">
-                <h1>{{blog.title}}</h1>
-                <p>
-                    {% if blog.body_html %}
-                        {{blog.body_html | safe}}
-                    {% else %}
-                        {{blog.body}}
-                    {% endif %}
-                </p>
-			</div>
-		</div>
-	</div>
+        <div class="col-md-2 column">
+        </div>
+        <div class="col-md-8 column">
+           
+                    <div id="blog-editormd-view">
+                            <textarea id="append-test" >
+                                {{blog.body}}
+                    </textarea>
+                        </div>         
+            
+        </div>
+        <div class="col-md-2 column">
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+{%block scripts%}
+{{super()}}
+<script src="../static/js/jquery-1.11.1.js"></script>
+<script src="../static/js/editormd.min.js"></script>
+<script src="../static/editormd/lib/marked.min.js"></script>
+<script src="../static/editormd/lib/prettify.min.js"></script>
+        
+<script src="../static/editormd/lib/raphael.min.js"></script>
+<script src="../static/editormd/lib/underscore.min.js"></script>
+<script src="../static/editormd/lib/sequence-diagram.min.js"></script>
+<script src="../static/editormd/lib/flowchart.min.js"></script>
+<script src="../static/editormd/lib/jquery.flowchart.min.js"></script>
+
+<script type="text/javascript">
+   $(function () {
+    testEditormdView2 = editormd.markdownToHTML("blog-editormd-view", {
+        htmlDecode: "style,script,iframe", // you can filter tags decode
+        emoji: true,
+        taskList: true,
+        tex: true, // 默认不解析
+        flowChart: true, // 默认不解析
+        sequenceDiagram: true, // 默认不解析
+    });
+});
+</script>
+
+
 {% endblock %}

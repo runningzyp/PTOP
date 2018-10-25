@@ -39,6 +39,7 @@
 {%block scripts%}
 {{super()}}
     <script src="{{url_for('static',filename='js/editormd.min.js')}}"></script>
+    <script src="{{url_for('static',filename='editormd/plugins/emoji-dialog/emoji-dialog.js')}}"></script>
 
     <script>
             var BlogEditor;
@@ -47,6 +48,7 @@
                     width:$(".jumbotron").width,
                     height:$(".jumbotron").height,
                     syncScrolling : "single",
+                    emoji: true,
                     path:"{{url_for('static',filename='editormd/lib/')}}",
                     //启动本地图片上传功能
                     imageUpload:true,
