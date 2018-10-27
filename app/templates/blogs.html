@@ -51,15 +51,16 @@
 						</div>
 					</div>
 					<div class="bk-page">
-						{% for i in article_funny %}
+						
+					
 						<div class="bk-content">
-							{% for funny in i %}
-							<div  class=" icon position{{loop.index}}">
-								<a href="{{url_for('main.blog',id=funny.id)}}" ><p> {{funny.title}} </p></a>
+							
+							<div  class=" icon position">
+								
+							<a href="{{url_for('main.blogs')}}" ><p id='title'>{{articles[0].title}} </p></a>
 							</div>	
-							{% endfor %}					
+										
 						</div>
-						{% endfor %}
 					
 
 					</div>
@@ -225,14 +226,16 @@
 	</div>
 </div><!-- /container -->
 {% endblock %}
-<script>
-	var pram = {{test}};
-</script>
+
 <script src="{{url_for('static',filename = 'js/jquery-1.11.1.min.js')}}"></script>
+<script>
+		var total_page = {{count}};
+		var page = 1;
+		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
 <script src="{{url_for('static',filename = 'js/books1.js')}}"></script>
 <script>
 	
-
 	$(function () {
 		Books.init();
 

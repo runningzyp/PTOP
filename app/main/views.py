@@ -102,34 +102,67 @@ def upload_blog_img():
         return json.dumps(back)
 
 
-@main.route('/blogs')
+@main.route('/blogs', methods=['POST', 'GET'])
 def blogs():
+    if request.method == "POST":
+        page = request.form.get('page', 1, type=int)
+        article_type = request.form.get('article_type', 3, type=int)
+
+        pagination = Article.query.filter_by(article_type_id=article_type).paginate(
+            page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
+            error_out=False)
+        articles = pagination.items
+        article = articles[0]
+        print(article)
+        print(type(article))
+        print(article.to_json())
+        prev = None
+        if pagination.has_prev:
+            prev = url_for('main.blogs', page=page-1, _external=True)
+        next = None
+        if pagination.has_next:
+            next = url_for('main.blogs', page=page+1, _external=True)
+        return jsonify({
+            'article': article.to_json(),
+            'prev': prev,
+            'next': next,
+            'count': pagination.total
+        })
+    page = 1
+    article_type = 3
+    pagination = Article.query.filter_by(article_type_id=article_type).paginate(
+        page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
+        error_out=False)
+    articles = pagination.items
+    count = pagination.total
+    print(count)
+    return render_template('blogs.html', articles=articles, count=count)
     # flash('请输入正确的令牌')
     # articles = Article.query.order_by(Article.timestamp.desc()).all()
-    essay_s = Article.query.filter_by(article_type_id='2').order_by(
-        Article.timestamp.desc()).all()
-    funny_s = Article.query.filter_by(article_type_id='3').order_by(
-        Article.timestamp.desc()).all()
-    study_s = Article.query.filter_by(article_type_id='1').order_by(
-        Article.timestamp.desc()).all()
-    article_essay = []
-    article_funny = []
-    article_study = []
-    articles = [article_essay, article_funny, article_study]
-    count_1 = Article.query.filter_by(article_type_id='2').count()
-    count_2 = Article.query.filter_by(article_type_id='3').count()
-    count_3 = Article.query.filter_by(article_type_id='1').count()
+    # essay_s = Article.query.filter_by(article_type_id='2').order_by(
+    #     Article.timestamp.desc()).all()
+    # funny_s = Article.query.filter_by(article_type_id='3').order_by(
+    #     Article.timestamp.desc()).all()
+    # study_s = Article.query.filter_by(article_type_id='1').order_by(
+    #     Article.timestamp.desc()).all()
+    # article_essay = []
+    # article_funny = []
+    # article_study = []
+    # articles = [article_essay, article_funny, article_study]
+    # count_1 = Article.query.filter_by(article_type_id='2').count()
+    # count_2 = Article.query.filter_by(article_type_id='3').count()
+    # count_3 = Article.query.filter_by(article_type_id='1').count()
 
-    for i in range(0, count_1, 4):  # 每页显示4个数据,下同
-        article_essay.append(essay_s[i:i+4])
-    for i in range(0, count_2, 4):
-        article_funny.append(funny_s[i:i+4])
-    for i in range(0, count_3, 4):
-        article_study.append(study_s[i:i+4])
-    return render_template('blogs.html', article_essay=article_essay,
-                           article_funny=article_funny,
-                           article_study=article_study,
-                           test={'a': 2, 'b': 3})
+    # for i in range(0, count_1, 4):  # 每页显示4个数据,下同
+    #     article_essay.append(essay_s[i:i+4])
+    # for i in range(0, count_2, 4):
+    #     article_funny.append(funny_s[i:i+4])
+    # for i in range(0, count_3, 4):
+    #     article_study.append(study_s[i:i+4])
+    # return render_template('blogs.html', article_essay=article_essay,
+    #                        article_funny=article_funny,
+    #                        article_study=article_study,
+    #                        test={'a': 2, 'b': 3})
 
 
 @main.route('/blog/<int:id>')

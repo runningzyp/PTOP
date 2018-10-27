@@ -15,7 +15,7 @@ class Config:
     FLASKY_MAIL_SENDER = 'zhanyunpeng1996@163.com'
     FLASKY_ADMIN = os.environ.get('FLASK_ADMIN')
     UPLOAD_FOLDER = os.getcwd() + "/files/"  # 用户上传目录
-    FLASKY_ARTICLE_PER_PAGE = 4
+    FLASKY_ARTICLE_PER_PAGE = 1  # 每页显示数量
 
     @staticmethod
     def init_app(app):

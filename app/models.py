@@ -1,9 +1,12 @@
+
+import bleach
 from datetime import datetime
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import current_app, request, url_for
 from markdown import markdown
-import bleach
+
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
@@ -116,8 +119,16 @@ class Article(db.Model):
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
     body_html = db.Column(db.Text)
 
-    def __repr__(self):
-        return '<Article %s>' % self.title
+    def to_json(self):
+        json_article = {
+            'id': self.id,
+            'url': url_for('main.blog', id=self.id, _external=True),
+            'body': self.body,
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'blog_imgaes': self.blog_images
+        }
+        return json_article
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiaor):
@@ -138,6 +149,9 @@ class Article(db.Model):
                 'img': ['src', 'alt'],  # 支持<img src …>标签和属性
             }
         ))
+
+    def __repr__(self):
+        return '<Article %s>' % self.title
     '''
     @staticmethod
     def generate_fake(count=100):
