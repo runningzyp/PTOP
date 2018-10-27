@@ -1,3 +1,5 @@
+
+
 var Books = (function() {
 
 	var $books = $( '#bk-list > li > div.bk-book' ), booksCount = $books.length;
@@ -53,7 +55,7 @@ var Books = (function() {
 
 			} );
 
-			if( $content.length > 1 ) {
+			if( $content.length ==1 ) {
 
 				var $navPrev = $( '<span class="bk-page-prev">上一页</span>' ),
 					$navNext = $( '<span class="bk-page-next">下一页</span>' );
@@ -61,7 +63,10 @@ var Books = (function() {
 				$page.append( $( '<nav></nav>' ).append( $navPrev, $navNext ) );
 
 				$navPrev.on( 'click', function() {
+					alert(pram);
 					if( current > 0 ) {
+						
+						
 						--current;
 						$content.removeClass( 'bk-content-current' ).eq( current ).addClass( 'bk-content-current' );
 					}

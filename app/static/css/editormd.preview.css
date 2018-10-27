@@ -2878,11 +2878,11 @@
   background-color: #f8f8f8;
 }
 
-.markdown-body img {
+/* .markdown-body img {
   max-width: 100%;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
+} */
 
 .markdown-body code {
   padding: 0;

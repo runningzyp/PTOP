@@ -90,7 +90,36 @@ img { max-width: 100%; }
 .top-content .top-big-link {
 	margin-top: 45px;
 }
+/***** Footer *****/
+.footer{
+	position: absolute;
+	width: 100%;
+	/* border: solid red; */
+	height: auto;
+	bottom: 1px;
+}
+.footer div:first-child{
 
+	float: left;
+	width: 20%;
+	/* border: #fd625e solid; */
+	height: 100%;
+}
+.footer div:last-child{
+	margin-left: 80%;
+	width: 20%;
+	/* border: #fd625e solid; */
+	height: 100%
+}
+.footer a{
+	height: 25px;
+	color: azure;
+	display: inline-block;
+    margin: 0 6px;
+}
+.footer a:hover{
+	text-shadow: 0 0 5px #22c3aa;
+}
 
 /***** Modal *****/
 

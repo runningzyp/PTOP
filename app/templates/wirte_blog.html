@@ -8,26 +8,26 @@
 {% endblock %}
 
 {% block page_content %}
-<div class = "row clearfix" >
-		<div class = "col-md-12 column" >
-		</div>
+<div class="row clearfix">
+    <div class="col-md-12 column">
     </div>
+</div>
 
 <div class="row clearfix">
     <div class="col-md-2 column">
     </div>
     <div class="col-md-8 column">
         <div class="jumbotron">
-                <form method="post">
-                        {{form.hidden_tag()}}
-                        <div id="blog-editormd" class="form-control">
-                            {{form.body(class="form-control",required="required",style="display:none;",id="ts")}}
-                        </div>
+            <form method="post">
+                {{form.hidden_tag()}}
+                <div id="blog-editormd" class="form-control">
+                    {{form.body(class="form-control",required="required",style="display:none;",id="ts")}}
+                </div>
                 {{ wtf.form_field(form.title,class= "form-control") }}
                 {{ wtf.form_field(form.article_id,class= "form-control") }}
 
-                     <button type="submit" class="btn btn-primary form-control">提交</button>
-                    </form>  
+                <button type="submit" class="btn btn-primary form-control">提交</button>
+            </form>
         </div>
     </div>
     <div class="col-md-2 column">
@@ -38,22 +38,61 @@
 
 {%block scripts%}
 {{super()}}
-    <script src="{{url_for('static',filename='js/editormd.min.js')}}"></script>
-    <script src="{{url_for('static',filename='editormd/plugins/emoji-dialog/emoji-dialog.js')}}"></script>
+<script src="{{url_for('static',filename='js/jquery-1.11.1.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/editormd.js')}}"></script>
+<script src="{{url_for('static',filename='editormd/plugins/emoji-dialog/emoji-dialog.js')}}"></script>
+<script src="{{url_for('static',filename='editormd/plugins/image-dialog-qiniu/image-dialog-qiniu.js')}}"></script>
 
-    <script>
-            var BlogEditor;
-            $(function(){
-                BlogEditor=editormd("blog-editormd",{
-                    width:$(".jumbotron").width,
-                    height:$(".jumbotron").height,
-                    syncScrolling : "single",
-                    emoji: true,
-                    path:"{{url_for('static',filename='editormd/lib/')}}",
-                    //启动本地图片上传功能
-                    imageUpload:true,
-                    imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-                });
-            })
-    </script>
+
+<script>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    // $("#ts").append('hello'); //添加内容的方法
+    var BlogEditor;
+    $(function () {
+        BlogEditor = editormd("blog-editormd", {
+            width: $(".jumbotron").width,
+            height: $(".jumbotron").height,
+            syncScrolling: "single",
+            emoji: true,
+            placeholder          : "Enjoy Markdown! coding now...",
+            path: "{{url_for('static',filename='editormd/lib/')}}",
+            //启动本地图片上传功能
+            imageUpload: true,
+            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : $SCRIPT_ROOT+"/upload_blog_img",
+            onload: function () {
+                        //console.log('onload', this);
+                        //this.fullscreen();
+                        //this.unwatch();
+                        //this.watch().fullscreen();
+                        //this.width("100%");
+                        //this.height(480);
+                        //this.resize("100%", 640);
+                    },
+           
+
+            // toolbarIcons: function () {
+            //     return [
+            //         "undo", "redo", "bold", "del", "italic", "hr", "|",
+            //         "h1", "h2", "h3", "h4", "h5", "h6", "list-ul", "list-ol", "|",
+            //         "link", "reference-link", "qiniu", "table", "code", "code-block",
+            //         "datetime", "|",
+            //         "goto-line", "preview", "watch", "|",
+            //         "fullscreen", "clear", "search"
+            //     ];
+            // },
+            // //配置七牛上传插件
+            // toolbarIconsClass: {
+            //     qiniu: "fa-cloud-upload"
+            // },
+            // toolbarHandlers: {
+            //     qiniu: function (cm, icon, cursor, selection) {
+            //         this.imageDialogQiniu();
+            //     }
+            // },
+            // qiniuTokenUrl: $SCRIPT_ROOT+"get_token", //本地服务器获取七牛token的url
+            // qiniuPublishUrl: "http://pdc7jra0s.bkt.clouddn.com/"
+        });
+    });
+</script>
 {% endblock %}

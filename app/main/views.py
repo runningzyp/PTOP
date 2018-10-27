@@ -1,3 +1,7 @@
+import os
+import json
+import datetime
+
 from flask import render_template, session, redirect, url_for, current_app
 from flask import request, flash
 from flask_login import login_user, logout_user, login_required, login_manager
@@ -10,19 +14,23 @@ from .. import auth
 from .form import ArticleForm
 from flask import send_from_directory  # 文件下载
 from flask import jsonify
-import datetime
+
 from werkzeug import secure_filename  # 安全的文件名
-from . import send_key
-import json
+
 from ..decorators import admin_required
 
 from aliyunsdkcore import client
 from aliyunsdksts.request.v20150401 import AssumeRoleRequest
 import oss2
 
+from ..net_tools import appserver
 
-import os
+# 阿里云模块
+
+import time
+import base64
 UPLOAD_FOLDER = os.getcwd() + "/files/"
+BLOG_IMAGE = ''
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -45,14 +53,53 @@ def index():
 @login_required
 @admin_required
 def write_blog():
+    global BLOG_IMAGE
+
     form = ArticleForm()
     if form.validate_on_submit():
         article = Article(
             body=form.body.data, title=form.title.data,
+            blog_images=BLOG_IMAGE,
             article_type_id=int(form.article_id.data))
         db.session.add(article)
         return redirect(url_for('.blogs'))
+    print(BLOG_IMAGE)
+    BLOG_IMAGE = ''
     return render_template('wirte_blog.html', form=form)
+
+
+@main.route('/upload_blog_img', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def upload_blog_img():
+    if request.method == "POST":
+        # 阿里云主账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM账号进行API访问或日常运维，请登录 https://ram.console.aliyun.com 创建RAM账号。
+        auth = oss2.Auth('LTAIB5vPYWqfntRP', 'MGrtfdOjsjhf38xfLeLajRBp9iolTa')
+        # Endpoint以杭州为例，其它Region请按实际情况填写。
+        bucket = oss2.Bucket(
+            auth, 'http://oss-cn-shanghai.aliyuncs.com',
+            'xiangcaihua-blog')
+
+        dt = datetime.datetime.utcnow()
+        sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
+
+        # requests.get返回的是一个可迭代对象（Iterable），此时Python SDK会通过Chunked Encoding方式上传。
+        img = request.files['editormd-image-file']
+        filename = img.filename
+        sec_filename = '[' + sec_key + ']' + filename
+
+        bucket.put_object(sec_filename, img)
+        global BLOG_IMAGE
+        BLOG_IMAGE += sec_filename+"<->"
+        print(BLOG_IMAGE)
+
+        img_address = "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/" + sec_filename
+        back = {
+            "success": 1,
+            "message": "提示的信息",
+            "url": img_address
+        }
+        return json.dumps(back)
 
 
 @main.route('/blogs')
@@ -73,7 +120,7 @@ def blogs():
     count_2 = Article.query.filter_by(article_type_id='3').count()
     count_3 = Article.query.filter_by(article_type_id='1').count()
 
-    for i in range(0, count_1, 4):
+    for i in range(0, count_1, 4):  # 每页显示4个数据,下同
         article_essay.append(essay_s[i:i+4])
     for i in range(0, count_2, 4):
         article_funny.append(funny_s[i:i+4])
@@ -81,7 +128,8 @@ def blogs():
         article_study.append(study_s[i:i+4])
     return render_template('blogs.html', article_essay=article_essay,
                            article_funny=article_funny,
-                           article_study=article_study)
+                           article_study=article_study,
+                           test={'a': 2, 'b': 3})
 
 
 @main.route('/blog/<int:id>')
@@ -153,23 +201,6 @@ def uploaded_file(filename):
     persional_folder = UPLOAD_FOLDER+user.email
     return send_from_directory(persional_folder,
                                filename)
-
-
-@login_required
-@main.route('/test', methods=['GET', 'POST'])
-def test():
-    access_key_id = 'LTAInn4CiOcTMupp'
-    access_key_secret = 'YNHxZ7QdZ160zmMO0kmLu2QJ6MtA3A'
-    bucket_name = 'zhanyunpeng1995'
-    endpoint = 'oss-cn-shanghai.aliyuncs.com'
-    sts_role_arn = 'acs:ram::1158764349830607:role/oss-scaner'
-    token = send_key.fetch_sts_token(
-        access_key_id, access_key_secret, sts_role_arn)
-    print(token.access_key_id)
-    print(token.access_key_secret)
-    print(token.security_token)
-    return 'hello'
-# 未登录用户无法访问
 
 
 @main.route('/register')

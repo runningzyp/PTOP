@@ -29,8 +29,11 @@
 				<div class="bk-book book-1 bk-bookdefault">
 					<div class="bk-front">
 						<div class="bk-cover">
+								<div>
+										<img src="../static/img/book_image/gg.png">
+								</div>
 							<h2>
-								<span>Anthony Burghiss</span>
+								<span>The Little Pleasures of Life</span>
 								<span>闲情记趣</span>
 							</h2>
 						</div>
@@ -48,28 +51,28 @@
 						</div>
 					</div>
 					<div class="bk-page">
-						{% for i in article_essay %}
+						{% for i in article_funny %}
 						<div class="bk-content">
-							{% for essay in i %}
+							{% for funny in i %}
 							<div  class=" icon position{{loop.index}}">
-							<a href="{{url_for('main.blog',id=essay.id)}}" ><p> {{essay.title}} </p></a>
+								<a href="{{url_for('main.blog',id=funny.id)}}" ><p> {{funny.title}} </p></a>
 							</div>	
 							{% endfor %}					
 						</div>
 						{% endfor %}
+					
 
 					</div>
 					<div class="bk-back">
-						<p>In this nightmare vision of cats in revolt, fifteen-year-old Alex and his friends set out on a diabolical orgy
-							of robbery, rape, torture and murder. Alex is jailed for his teenage delinquency and the State tries to reform
-							him - but at what cost?</p>
+						<p></p>
 					</div>
 					<div class="bk-right"></div>
 					<div class="bk-left">
-						<h2>
-							<span>Anthony Burghiss</span>
-							<span>A Catwork Orange</span>
-						</h2>
+						<div>
+							<p>湛</p>
+							<p>允</p>
+							<p>鹏</p>
+						</div>
 					</div>
 					<div class="bk-top"></div>
 					<div class="bk-bottom"></div>
@@ -78,20 +81,24 @@
 					<button class="bk-bookback">翻转</button>
 					<button class="bk-bookview">查看内容</button>
 					<h3>
-						<span>Anthony Burghiss</span>
-						<span>A Catwork Orange</span>
+						<span></span>
+						<span>闲情记趣</span>
 					</h3>
-					<p>Social prophecy? Black comedy? Study of freewill? A Clockwork Orange is all of these. It is also a dazzling
-						experiment in language, as Burghiss creates a new language - 'meow', the cat slang of a not-too-distant future.</p>
+					<p>我们所度过的每个平凡的日常，也许就是连续发生的奇迹。
+						<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;—日常
+					</p>
+					
 				</div>
 			</li>
 			<li>
 				<div class="bk-book book-2 bk-bookdefault">
 					<div class="bk-front">
 						<div class="bk-cover">
+							
 							<h2>
-								<span>技</span>
-								<span>分享</span>
+								<span>技术</span>
+								<span>技术</span>
 							</h2>
 						</div>
 						<div class="bk-cover-back">
@@ -111,9 +118,9 @@
 						{% for i in article_study %}
 						<div class="bk-content">
 							{% for study in i %}
-							<div  class=" icon position{{loop.index}}">
+							<!-- <div  class=" icon position{{loop.index}}">
 								<a href="{{url_for('main.blog',id=study.id)}}" ><p> {{study.title}} </p></a>
-							</div>	
+							</div>	 -->
 							{% endfor %}					
 						</div>
 						{% endfor %}
@@ -121,15 +128,16 @@
 				
 					</div>
 					<div class="bk-back">
-						<p>Tyrant, blackmailer, racketeer, murderer - his influence reaches every level of American society. Meet Cat
-							Corleone, a friendly cat, a just cat, a reasonable cat. The deadliest lord of the Cata Nostra. The Catfather.</p>
+						<p></p>
 					</div>
 					<div class="bk-right"></div>
 					<div class="bk-left">
-						<h2>
-							<span>The Catfather</span>
-							<span>by Mario Purrzo</span>
-						</h2>
+						<div>
+							<p>天</p>
+							<p>气</p>
+							<p>不</p>
+							<p>错</p>
+						</div>
 					</div>
 					<div class="bk-top"></div>
 					<div class="bk-bottom"></div>
@@ -141,81 +149,93 @@
 						<span>Mario Purrzo</span>
 						<span>The Catfather</span>
 					</h3>
-					<p>A modern masterpiece,The Godfather is a searing portrayal of the 1940s criminal underworld. It is also the
-						intimate story of the Corleone family, at once drawn together and ripped apart by its unique position at the core
-						of the American Mafia. </p>
+					<p></p>
 				</div>
 			</li>
 			<li>
 				<div class="bk-book book-3 bk-bookdefault">
-					<div class="bk-front">
-						<div class="bk-cover">
-							<h2>
-								<span>J.C. Salinger</span>
-								<span>The Catcher in the Rye</span>
-							</h2>
+						<div class="bk-front">
+							<div class="bk-cover">
+									<div>
+											<img src="../static/img/book_image/kk2.png">
+									</div>
+								
+								<h2>
+									<span>essay</span>
+									<span>心情随笔</span>
+								</h2>
+							</div>
+							<div class="bk-cover-back">
+									<div class="side">
+											<span class="box"></span>
+											<span class="short"></span>
+											<span class="short"></span>
+											<span class="middle"></span>
+											<span class="lang"></span>
+											<span class="middle"></span>	
+											<span class="lang"></span>
+											<span class="lang"></span>
+									</div>
+							</div>
 						</div>
-						<div class="bk-cover-back">
-								<div class="side">
-										<span class="box"></span>
-										<span class="short"></span>
-										<span class="short"></span>
-										<span class="middle"></span>
-										<span class="lang"></span>
-										<span class="middle"></span>	
-										<span class="lang"></span>
-										<span class="lang"></span>
+						<div class="bk-page">
+							
+								{% for i in article_essay %}
+								<div class="bk-content">
+									{% for essay in i %}
+									<div  class=" icon position{{loop.index}}">
+										
+									<a href="{{url_for('main.blog',id=essay.id)}}" ><p> {{essay.title}} </p></a>
+									</div>	
+									{% endfor %}					
 								</div>
+								{% endfor %}
 						</div>
-					</div>
-					<div class="bk-page">
-						{% for i in article_funny %}
-						<div class="bk-content">
-							{% for funny in i %}
-							<div  class=" icon position{{loop.index}}">
-								<a href="{{url_for('main.blog',id=funny.id)}}" ><p> {{funny.title}} </p></a>
-							</div>	
-							{% endfor %}					
+						<div class="bk-back">
+							<img src="../static/img/book_image/33.png" alt="cat" />
+							<p></p>
 						</div>
-						{% endfor %}
-						
+						<div class="bk-right"></div>
+						<div class="bk-left">
+							<div>
+								<p>天</p>
+								<p>气</p>
+								<p>不</p>
+								<p>错</p>
+							</div>							
+						</div>
+						<div class="bk-top"></div>
+						<div class="bk-bottom"></div>
 					</div>
-					<div class="bk-back">
-						<img src="images/3.png" alt="cat" />
-						<p>Holden Catfield is a seventeen-year-old dropout who has just been kicked out of his fourth school. Navigating
-							his way through the challenges of growing up, Holden dissects the 'phony' aspects of society.</p>
+					<div class="bk-info">
+						<button class="bk-bookback">翻转</button>
+						<button class="bk-bookview">查看内容</button>
+						<h3>
+							<span></span>
+							<span>心情随笔</span>
+						</h3>
+						<p>我们曾经仰望星空，思索自身的存在
+								,而现在我们只会低着头，担心身边的一切.
+								<br>
+								We used to look up at the sky and wonder who ww are,
+								now we just look down and worry about oourselves.</p>
 					</div>
-					<div class="bk-right"></div>
-					<div class="bk-left">
-						<h2>
-							<span>J.C. Salinger</span>
-							<span>The Catcher in the Rye</span>
-						</h2>
-					</div>
-					<div class="bk-top"></div>
-					<div class="bk-bottom"></div>
-				</div>
-				<div class="bk-info">
-					<button class="bk-bookback">翻转</button>
-					<button class="bk-bookview">查看内容</button>
-					<h3>
-						<span>J.C. Salinger</span>
-						<span>The Catcher in the Rye</span>
-					</h3>
-					<p>Originally published for adults, this novel has since become popular with adolescent readers for its themes of
-						cat confusion, angst, alienation, and rebellion.</p>
-				</div>
-			</li>
+				</li>
 		</ul>
 	</div>
 </div><!-- /container -->
 {% endblock %}
+<script>
+	var pram = {{test}};
+</script>
 <script src="{{url_for('static',filename = 'js/jquery-1.11.1.min.js')}}"></script>
 <script src="{{url_for('static',filename = 'js/books1.js')}}"></script>
 <script>
-	$(function () {
+	
 
+	$(function () {
 		Books.init();
 
 	});
+
 </script>

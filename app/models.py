@@ -111,15 +111,20 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
     body = db.Column(db.Text)
+    blog_images = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
     body_html = db.Column(db.Text)
+
+    def __repr__(self):
+        return '<Article %s>' % self.title
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiaor):
         allow_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                       'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                      'h1', 'h2', 'h3', 'p', 'img', 'br', 'table', 'tr', 'td']
+                      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'br',
+                      'table', 'tr', 'td']
         # 转换markdown为html，并清洗html标签
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value,
