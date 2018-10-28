@@ -110,8 +110,15 @@ def blogs():
             'essay': 2,
             'funny': 3
         }
-        page = request.form.get('page', 1, type=int)
-        article_type = request.form.get('article_type')
+        # page = request.form.get('page', 1, type=int)
+        # article_type = request.form.get('article_type')
+        print('1')
+        print(request.get_data())
+        data = json.loads(request.get_data())
+        print(data)
+        page = data['page']
+        article_type = data['article_type']
+        print(article_type)
         article_type_id = type_dic[article_type]
 
         pagination = Article.query.filter_by(article_type_id=article_type_id).paginate(

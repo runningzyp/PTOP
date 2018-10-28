@@ -83,21 +83,43 @@ var Books = (function () {
 					 alert(page);
 					 var title = $this.parent().prev(".bk-content").find(".title")
 					 var content = $this.parent().prev(".bk-content").find(".content")
+					 var data={"page":page-1, "article_type":article_type};
 					if (page >1) {
 						gl_current_page[article_type]--;
-						$.post(
-							$SCRIPT_ROOT + '/blogs', {
-								page: page-1, 
-								article_type: article_type
-							},
-							function (data, status) {
-								if (status == 'success') {
-									title.text(data.article.id);
-									content.text(data.article.title)
-								} else {
-									alert('error');
-								}
-							});
+						$.ajax({
+							url: $SCRIPT_ROOT + '/blogs',
+							type: "POST",
+							data: JSON.stringify({
+								"page":page-1,
+								"article_type": article_type,
+							}),
+							async: true,
+							cache: false,
+							contentType:"application/json",
+							dataType: "json",
+							// processData:false,
+							success:function (data) {
+								title.children("p").text(data.article.title);
+								content.html(data.article.body_html)
+						　　}, 
+						　　error: function (data) { 
+							　　　　　alert('error');
+						　　}							
+						});
+						//post 方法已经弃用
+						// $.post(
+						// 	$SCRIPT_ROOT + '/blogs', {
+						// 		page: page-1, 
+						// 		article_type: article_type
+						// 	},
+						// 	function (data, status) {
+						// 		if (status == 'success') {
+						// 			title.text(data.article.id);
+						// 			content.text(data.article.title)
+						// 		} else {
+						// 			alert('error');
+						// 		}
+						// 	});
 					} else {
 						alert('第一页')
 					}
@@ -116,19 +138,42 @@ var Books = (function () {
 					var content = $this.parent().prev(".bk-content").find(".content")
 					if (page < total_page) {
 						gl_current_page[article_type]++;
-						$.post(
-							$SCRIPT_ROOT + '/blogs', {
-								page: page+1,
-								article_type: article_type
-							},
-							function (data, status) {
-								if (status == 'success') {
-									title.text(data.article.id);
-									content.text(data.article.title)
-								} else {
-									alert('error');
-								}
-							});
+
+						$.ajax({
+							url: $SCRIPT_ROOT + '/blogs',
+							type: "POST",
+							data: JSON.stringify({
+								"page":page+1,
+								"article_type": article_type,
+							}),
+							async: true,
+							cache: false,
+							contentType:"application/json",
+							dataType: "json",
+							// processData:false,
+							success:function (data) {
+								title.children("p").text(data.article.title);
+								content.html(data.article.body_html)
+						　　}, 
+						　　error: function (data) { 
+							　　　　　alert('error');
+						　　}							
+						});
+
+						// post 方法已经弃用
+						// $.post(
+						// 	$SCRIPT_ROOT + '/blogs', {
+						// 		page: page+1,
+						// 		article_type: article_type
+						// 	},
+						// 	function (data, status) {
+						// 		if (status == 'success') {
+						// 			title.text(data.article.id);
+						// 			content.text(data.article.title)
+						// 		} else {
+						// 			alert('error');
+						// 		}
+						// 	});
 					} else {
 						alert('最后一页')
 					}

@@ -13,6 +13,20 @@
 	-moz-perspective: 1800px;
 	perspective: 1800px;
 }
+@media screen and (max-width:768px){
+	.bk-list li {
+		position: relative;
+		width: 300px;
+		left:50%;
+		margin-left: -150px;
+		float: left;
+		z-index: 1;
+		-webkit-perspective: 1800px;
+		-moz-perspective: 1800px;
+		perspective: 1800px;
+		/* right: 35px; */
+	}
+}
 
 .bk-list li:last-child {
 	margin-right: 0;
@@ -132,7 +146,35 @@
 	-moz-backface-visibility: hidden;
 	backface-visibility: hidden;
 	z-index: 9;
+	border-radius: 0 5px 5px 0;
 	/* background-image: url('../img/book_image/back.jpg')  */
+	position: relative;
+	/* Fallback */
+	background: linear-gradient(-150deg, transparent 1.5em, #fdfdfd3d 0);
+	border-radius: .5em;
+}
+.bk-page:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	background:
+		linear-gradient(to left bottom, transparent 50%, rgba(0, 0, 0, .2) 0, rgba(0, 0, 0, .4)) 100% 0 no-repeat;
+	/*线性渐变：从左到底（也就是从左边到最底部，斜切过来），
+       透明50%的宽度渐变到rgba(0,0,0,.2) 0,，再到rgba(0,0,0,.4))
+        background-size：100% 0
+        不重复或平铺 
+      */
+	width: 1.73em;
+	height: 3em;
+	transform: translateY(-1.3em) rotate(-30deg);
+	/*translateY(-1.3em)：y轴方向平移-1.3em，就向上移动出去了一点
+          rotate(-30deg)：  平面旋转-30度
+      */
+	transform-origin: bottom right;
+	border-bottom-left-radius: inherit;
+	box-shadow: -.2em .2em .3em -.1em rgba(0, 0, 0, .15);
+	
 }
 
 .bk-list li .bk-front,
@@ -278,7 +320,7 @@
 .bk-list li .bk-right,
 .bk-list li .bk-top,
 .bk-list li .bk-bottom {
-	background-color: #fff;
+	background-color: #ececec;
 }
 
 .bk-list li .bk-front > div {
@@ -342,6 +384,9 @@
 	-moz-transition: opacity 0.3s ease-in-out;
 	transition: opacity 0.3s ease-in-out;
 	cursor: default;
+  /* important */
+	font-family:"myfonts" ;
+	font-size: large;
 }
 
 
@@ -366,7 +411,19 @@
 	/* margin: 2.5% 10%; */
 	box-shadow:0 ;
 }
-
+.bk-content .content{
+	float: left;
+	padding: 5px 10px;
+	/* border: 1px solid; */
+	width:100%;
+	height: 80%;
+	margin-top: 2px;
+    /* width: 80%; */
+    /* height: 20%; */
+	/* margin: 2.5% 10%; */
+	box-shadow:0 ;
+	
+}
 
 
 
@@ -422,6 +479,7 @@
 	right: 10px;
     bottom: 0px;
 	cursor: pointer;
+
 }
 
 .bk-page nav span {
@@ -482,10 +540,6 @@
 	
 } 
 
-.bk-content p {
-	font-family:"myfonts" ;
-	font-size: large;
-}
 
 .bk-left h2 {
 	color: #fff;

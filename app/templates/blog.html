@@ -5,7 +5,7 @@
 
 {{ super() }}
 <!-- <link rel="stylesheet" href="{{url_for('static',filename='css/editormd.preview.css')}}"> -->
-<link rel="stylesheet" href="{{url_for('static',filename='css/preview.css')}}">
+<link rel="stylesheet" href="../static/css/preview.css">
 <style>
     #blog-editormd-view{
     /* background-image: url('../static/img/blog_image/blog_back.jpg') */
@@ -55,8 +55,6 @@
 
 {%block scripts%}
 {{super()}}
-<script src="../static/js/jquery-1.11.1.js"></script>
-
 <script src="../static/editormd/lib/marked.min.js"></script>
 <script src="../static/editormd/lib/prettify.min.js"></script>
 <script src="../static/editormd/lib/raphael.min.js"></script>

@@ -6,7 +6,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css"  href="{{url_for('static',filename='css/window.css')}}">
+<link rel="stylesheet" type="text/css"  href="../static/css/window.css">
 {% endblock %}
 
 
@@ -36,7 +36,7 @@
                                <div class="row clearfix">
                                        <div class="col-md-1 col-xs-2 column" style="padding-left:15px;padding-right: 0;">
                                                <a href="{{url_for('.user',username=dat.author.username)}}">
-                                                   <img class="profile-thumbnail img-responsive" src="{{ url_for('static', filename='ico/web.png') }}">
+                                                   <img class="profile-thumbnail img-responsive" src="../static/ico/web.png">
                                                </a>                                                            
                                        </div>
                                       
@@ -93,10 +93,10 @@
                 <div id="file-submit" name="file-submit" class="btn btn-default btn-block btn-primary">提交 </div>
             <div class="Aqua">
                 <div class="aqua-left">
-                    <img class="img-responsive"  src="{{ url_for('static', filename='img/backgrounds/box.png') }}">
+                    <img class="img-responsive"  src="../static/img/backgrounds/box.png">
                 </div>
                 <div class="aqua-right">
-                    <img class="img-responsive"  src="{{ url_for('static', filename='img/backgrounds/Aqua_nobox.png') }}">
+                    <img class="img-responsive"  src="../static/img/backgrounds/Aqua_nobox.png">
                  </div>
                
             </div>
@@ -106,7 +106,7 @@
         </div> <!-- move -->
      </div>
     {% block script %}
-    <script src="../static/js/jquery-1.11.1.js"></script>
+     {{super()}}
     <script src="../static/js/window.js"></script>
     <script type=text/javascript>
 

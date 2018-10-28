@@ -5,11 +5,11 @@
 <title>香菜花</title>	
 <meta name="description" content="" />
 <meta name="keywords" content="" />
-<link rel="shortcut icon" href="{{ url_for('static', filename='my.ico') }}" type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename='ico/my.ico') }}" type="image/x-icon">
-<link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'css/default.css')}}" />
-<link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'css/component.css')}}" />
-<script src="{{url_for('static',filename = 'js/modernizr.custom.js')}}"></script>
+<link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
+<link rel="icon" href="../static/ico/my.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="../static/css/default.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/component.css" />
+<script src="../static/js/modernizr.custom.js"></script>
 
 {% endblock %}
 
@@ -55,8 +55,12 @@
 						<div class="bk-content" id = 'funny'>
 								{% if articles[2] %}
 							<div  class="title">
-								{{articles[2][0].id}}</div>	
-							<div  class="content">{{articles[2][0].title}}</div>	
+								<p>{{articles[2][0].id}}</p>
+
+								</div>
+							<div  class="content">
+								<p>{{articles[2][0].title}}</p>
+							</div>	
 								{% endif %}		
 						</div>
 					
@@ -186,7 +190,7 @@
 											
 											{{articles[1][0].title}}</div>	
 											
-										<div  class="content">天衢不错</div>
+										<div  class="content"></div>
 										{% endif %}			
 									</div>
 						</div>
@@ -225,7 +229,7 @@
 </div><!-- /container -->
 {% endblock %}
 
-<script src="{{url_for('static',filename = 'js/jquery-1.11.1.min.js')}}"></script>
+<script src="../static/js/jquery-1.11.1.js"></script>
 <script>
 		
 		counts = {{counts}};
@@ -242,7 +246,7 @@
 		}
 		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
-<script src="{{url_for('static',filename = 'js/books1.js')}}"></script>
+<script src="../static/js/books1.js"></script>
 <script>
 	
 	$(function () {

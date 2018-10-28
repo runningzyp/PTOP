@@ -4,7 +4,7 @@
 {% block head %}
 
 {{ super() }}
-<link rel="stylesheet" href="{{url_for('static',filename='css/editormd.min.css')}}">
+<link rel="stylesheet" href="../static/css/editormd.min.css">
 {% endblock %}
 
 {% block page_content %}
@@ -38,10 +38,9 @@
 
 {%block scripts%}
 {{super()}}
-<script src="{{url_for('static',filename='js/jquery-1.11.1.min.js')}}"></script>
-<script src="{{url_for('static',filename='js/editormd.js')}}"></script>
-<script src="{{url_for('static',filename='editormd/plugins/emoji-dialog/emoji-dialog.js')}}"></script>
-<script src="{{url_for('static',filename='editormd/plugins/image-dialog-qiniu/image-dialog-qiniu.js')}}"></script>
+<script src="../static/js/editormd.js"></script>
+<script src="../static/editormd/plugins/emoji-dialog/emoji-dialog.js"></script>
+<script src="../static/editormd/plugins/image-dialog-qiniu/image-dialog-qiniu.js"></script>
 
 
 <script>
@@ -55,7 +54,7 @@
             syncScrolling: "single",
             emoji: true,
             placeholder          : "Enjoy Markdown! coding now...",
-            path: "{{url_for('static',filename='editormd/lib/')}}",
+            path: "../static/editormd/lib/",
             //启动本地图片上传功能
             imageUpload: true,
             imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
