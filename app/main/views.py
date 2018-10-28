@@ -105,17 +105,21 @@ def upload_blog_img():
 @main.route('/blogs', methods=['POST', 'GET'])
 def blogs():
     if request.method == "POST":
+        type_dic = {
+            'study': 1,
+            'essay': 2,
+            'funny': 3
+        }
         page = request.form.get('page', 1, type=int)
-        article_type = request.form.get('article_type', 3, type=int)
+        article_type = request.form.get('article_type')
+        article_type_id = type_dic[article_type]
 
-        pagination = Article.query.filter_by(article_type_id=article_type).paginate(
+        pagination = Article.query.filter_by(article_type_id=article_type_id).paginate(
             page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
             error_out=False)
         articles = pagination.items
         article = articles[0]
-        print(article)
-        print(type(article))
-        print(article.to_json())
+
         prev = None
         if pagination.has_prev:
             prev = url_for('main.blogs', page=page-1, _external=True)
@@ -128,15 +132,28 @@ def blogs():
             'next': next,
             'count': pagination.total
         })
-    page = 1
-    article_type = 3
-    pagination = Article.query.filter_by(article_type_id=article_type).paginate(
-        page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
-        error_out=False)
-    articles = pagination.items
-    count = pagination.total
-    print(count)
-    return render_template('blogs.html', articles=articles, count=count)
+    page = 1  # 默认第一页
+    articles = []
+    counts = []
+    for i in range(3):
+        pagination = Article.query.filter_by(article_type_id=i+1).paginate(
+            page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
+            error_out=False)
+        articles.append(pagination.items)
+        print(pagination.items)
+        counts.append(pagination.total)
+        # print(counts[i])
+        # print(articles[i][0].article_type_id)
+    print(counts)
+    print(articles)
+    print('1:')
+    print(type(articles[0]))
+    if articles[0]:
+        print('存在')
+    print(articles[0]is None)
+    print(articles[1]is None)
+    print(articles[2]is None) 
+    return render_template('blogs.html', articles=articles, counts=counts)
     # flash('请输入正确的令牌')
     # articles = Article.query.order_by(Article.timestamp.desc()).all()
     # essay_s = Article.query.filter_by(article_type_id='2').order_by(

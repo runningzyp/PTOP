@@ -2,7 +2,7 @@
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>香菜花</title>
+<title>香菜花</title>	
 <meta name="description" content="" />
 <meta name="keywords" content="" />
 <link rel="shortcut icon" href="{{ url_for('static', filename='my.ico') }}" type="image/x-icon">
@@ -51,15 +51,13 @@
 						</div>
 					</div>
 					<div class="bk-page">
-						
-					
-						<div class="bk-content">
-							
-							<div  class=" icon position">
-								
-							<a href="{{url_for('main.blogs')}}" ><p id='title'>{{articles[0].title}} </p></a>
-							</div>	
-										
+
+						<div class="bk-content" id = 'funny'>
+								{% if articles[2] %}
+							<div  class="title">
+								{{articles[2][0].id}}</div>	
+							<div  class="content">{{articles[2][0].title}}</div>	
+								{% endif %}		
 						</div>
 					
 
@@ -116,15 +114,16 @@
 						</div>
 					</div>
 					<div class="bk-page">
-						{% for i in article_study %}
-						<div class="bk-content">
-							{% for study in i %}
-							<!-- <div  class=" icon position{{loop.index}}">
-								<a href="{{url_for('main.blog',id=study.id)}}" ><p> {{study.title}} </p></a>
-							</div>	 -->
-							{% endfor %}					
-						</div>
-						{% endfor %}
+							<div class="bk-content" id = 'study'>
+									{% if articles[0] %}
+									<div  class="title">
+										
+										{{articles[0][0].title}}
+									
+									</div>	
+									<div  class="content">天衢不错</div>	
+									{% endif %}		
+								</div>
 				
 				
 					</div>
@@ -181,16 +180,15 @@
 						</div>
 						<div class="bk-page">
 							
-								{% for i in article_essay %}
-								<div class="bk-content">
-									{% for essay in i %}
-									<div  class=" icon position{{loop.index}}">
-										
-									<a href="{{url_for('main.blog',id=essay.id)}}" ><p> {{essay.title}} </p></a>
-									</div>	
-									{% endfor %}					
-								</div>
-								{% endfor %}
+								<div class="bk-content" id = 'essay'>
+										{% if articles[1] %}
+										<div  class="title">
+											
+											{{articles[1][0].title}}</div>	
+											
+										<div  class="content">天衢不错</div>
+										{% endif %}			
+									</div>
 						</div>
 						<div class="bk-back">
 							<img src="../static/img/book_image/33.png" alt="cat" />
@@ -229,8 +227,19 @@
 
 <script src="{{url_for('static',filename = 'js/jquery-1.11.1.min.js')}}"></script>
 <script>
-		var total_page = {{count}};
-		var page = 1;
+		
+		counts = {{counts}};
+
+		var gl_total_page = {
+		'study': counts[0],
+		'essay': counts[1],
+		'funny': counts[2]
+		};
+		gl_current_page ={
+			'study':1,
+			'essay':1,
+			'funny':1			
+		}
 		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script src="{{url_for('static',filename = 'js/books1.js')}}"></script>

@@ -123,6 +123,7 @@ class Article(db.Model):
         json_article = {
             'id': self.id,
             'url': url_for('main.blog', id=self.id, _external=True),
+            'title': self.title,
             'body': self.body,
             'body_html': self.body_html,
             'timestamp': self.timestamp,

@@ -350,11 +350,11 @@
 	pointer-events: auto;
 }
 
-.bk-content div{
+.bk-content .title{
 	float: left;
 	padding: 5px 10px;
-	border-top: 1px solid;
-	border-top-color: #777;
+	/* border-top: 1px solid;
+	border-top-color: #777; */
 	border-bottom: 1px solid;
 	border-bottom-color: #777;
     /* border: #d0544e;
@@ -366,32 +366,37 @@
 	/* margin: 2.5% 10%; */
 	box-shadow:0 ;
 }
-.bk-content div:hover{
+
+
+
+
+
+/* .bk-content div:hover{
     float: left;
     padding: 10px;
-    /* border: black;
-    border-style: solid; */
+
     width: 80%;
     height: 20%;
     margin: 2.5% 10%;
 	transform: scale(1.1, 1.1);
 	box-shadow: inset -1px -1px 1px 0px;
-} 
-.icon{
-	/* background: url('../img/book_image/back.jpg') */
-}
-.position1{
+}  */
+/* .icon{
+	background: url('../img/book_image/back.jpg')
+} */
+/* .position1{
 	background-position: -45.5px -36.375px;
 }
 .position2{
 	background-position: -45.5px -117.125px;
-}
+} */
+/*
 .position3{
 	background-position: -45.5px -197.875px;
 }
 .position4{
 	background-position: -45.5px -278.625px;
-}
+} */
 
 .bk-content #p {
 	padding: 0 0 10px;

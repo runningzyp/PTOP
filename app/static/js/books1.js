@@ -69,20 +69,31 @@ var Books = (function () {
 
 				var $navPrev = $('<span class="bk-page-prev">上一页</span>'),
 					$navNext = $('<span class="bk-page-next">下一页</span>');
-
+					
 				$page.append($('<nav></nav>').append($navPrev, $navNext));
-
+				
+				
+				// alert($("#"+article_type).html())
+				// alert($("#"+article_type).children().children().html())
 				$navPrev.on('click', function () {
+					
+					 var $this = $(this);
+					 var article_type = $this.parent().prev().attr("id");
+					 var page = gl_current_page[article_type];
+					 alert(page);
+					 var title = $this.parent().prev(".bk-content").find(".title")
+					 var content = $this.parent().prev(".bk-content").find(".content")
 					if (page >1) {
-						page--;
+						gl_current_page[article_type]--;
 						$.post(
 							$SCRIPT_ROOT + '/blogs', {
-								page: page,
-								article_type: 3
+								page: page-1, 
+								article_type: article_type
 							},
 							function (data, status) {
 								if (status == 'success') {
-									$("#title").text(data.article.id);
+									title.text(data.article.id);
+									content.text(data.article.title)
 								} else {
 									alert('error');
 								}
@@ -95,16 +106,25 @@ var Books = (function () {
 				});
 
 				$navNext.on('click', function () {
+					var $this = $(this);
+					var article_type = $this.parent().prev().attr("id");
+					var total_page = gl_total_page[article_type];
+				
+				
+					var page = gl_current_page[article_type];
+					var title = $this.parent().prev(".bk-content").find(".title")
+					var content = $this.parent().prev(".bk-content").find(".content")
 					if (page < total_page) {
-						page++;
+						gl_current_page[article_type]++;
 						$.post(
 							$SCRIPT_ROOT + '/blogs', {
-								page: page,
-								article_type: 3
+								page: page+1,
+								article_type: article_type
 							},
 							function (data, status) {
 								if (status == 'success') {
-									$("#title").text(data.article.id);
+									title.text(data.article.id);
+									content.text(data.article.title)
 								} else {
 									alert('error');
 								}
