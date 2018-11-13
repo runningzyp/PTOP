@@ -11,7 +11,7 @@ from ..models import User, Data, Article, ArticleType
 from ..email import send_email
 from . import main
 from .. import auth
-from .form import ArticleForm
+from .forms import ArticleForm
 from flask import send_from_directory  # 文件下载
 from flask import jsonify
 
@@ -49,59 +49,6 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/write-blog', methods=['POST', 'GET'])
-@login_required
-@admin_required
-def write_blog():
-    global BLOG_IMAGE
-
-    form = ArticleForm()
-    if form.validate_on_submit():
-        article = Article(
-            body=form.body.data, title=form.title.data,
-            blog_images=BLOG_IMAGE,
-            article_type_id=int(form.article_id.data))
-        db.session.add(article)
-        return redirect(url_for('.blogs'))
-    print(BLOG_IMAGE)
-    BLOG_IMAGE = ''
-    return render_template('wirte_blog.html', form=form)
-
-
-@main.route('/upload_blog_img', methods=['POST', 'GET'])
-@login_required
-@admin_required
-def upload_blog_img():
-    if request.method == "POST":
-        # 阿里云主账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM账号进行API访问或日常运维，请登录 https://ram.console.aliyun.com 创建RAM账号。
-        auth = oss2.Auth('LTAIB5vPYWqfntRP', 'MGrtfdOjsjhf38xfLeLajRBp9iolTa')
-        # Endpoint以杭州为例，其它Region请按实际情况填写。
-        bucket = oss2.Bucket(
-            auth, 'http://oss-cn-shanghai.aliyuncs.com',
-            'xiangcaihua-blog')
-
-        dt = datetime.datetime.utcnow()
-        sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
-
-        # requests.get返回的是一个可迭代对象（Iterable），此时Python SDK会通过Chunked Encoding方式上传。
-        img = request.files['editormd-image-file']
-        filename = img.filename
-        sec_filename = '[' + sec_key + ']' + filename
-
-        bucket.put_object(sec_filename, img)
-        global BLOG_IMAGE
-        BLOG_IMAGE += sec_filename+"<->"
-        print(BLOG_IMAGE)
-
-        img_address = "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/" + sec_filename
-        back = {
-            "success": 1,
-            "message": "提示的信息",
-            "url": img_address
-        }
-        return json.dumps(back)
-
-
 @main.route('/blogs', methods=['POST', 'GET'])
 def blogs():
     if request.method == "POST":
@@ -110,10 +57,6 @@ def blogs():
             'essay': 2,
             'funny': 3
         }
-        # page = request.form.get('page', 1, type=int)
-        # article_type = request.form.get('article_type')
-        print('1')
-        print(request.get_data())
         data = json.loads(request.get_data())
         print(data)
         page = data['page']
@@ -151,15 +94,15 @@ def blogs():
         counts.append(pagination.total)
         # print(counts[i])
         # print(articles[i][0].article_type_id)
-    print(counts)
-    print(articles)
-    print('1:')
-    print(type(articles[0]))
-    if articles[0]:
-        print('存在')
-    print(articles[0]is None)
-    print(articles[1]is None)
-    print(articles[2]is None) 
+    # print(counts)
+    # print(articles)
+    # print('1:')
+    # print(type(articles[0]))
+    # if articles[0]:
+    #     print('存在')
+    # print(articles[0]is None)
+    # print(articles[1]is None)
+    # print(articles[2]is None)
     return render_template('blogs.html', articles=articles, counts=counts)
     # flash('请输入正确的令牌')
     # articles = Article.query.order_by(Article.timestamp.desc()).all()
@@ -269,3 +212,8 @@ def turn():
 @login_required
 def secret():
     return 'you can'
+
+
+@main.route('/about_me')
+def about():
+    return render_template('about_me.html')

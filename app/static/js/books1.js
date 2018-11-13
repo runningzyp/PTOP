@@ -80,7 +80,7 @@ var Books = (function () {
 					 var $this = $(this);
 					 var article_type = $this.parent().prev().attr("id");
 					 var page = gl_current_page[article_type];
-					 alert(page);
+					//  alert(page);
 					 var title = $this.parent().prev(".bk-content").find(".title")
 					 var content = $this.parent().prev(".bk-content").find(".content")
 					 var data={"page":page-1, "article_type":article_type};
@@ -99,7 +99,7 @@ var Books = (function () {
 							dataType: "json",
 							// processData:false,
 							success:function (data) {
-								title.children("p").text(data.article.title);
+								title.find("p").text(data.article.title);
 								content.html(data.article.body_html)
 						　　}, 
 						　　error: function (data) { 
@@ -152,7 +152,7 @@ var Books = (function () {
 							dataType: "json",
 							// processData:false,
 							success:function (data) {
-								title.children("p").text(data.article.title);
+								title.find("p").text(data.article.title);
 								content.html(data.article.body_html)
 						　　}, 
 						　　error: function (data) { 

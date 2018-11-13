@@ -6,7 +6,10 @@ html,body{
 }
 body{
     position: relative;
-    background: aquamarine!important;
+    /* background: aquamarine!important; */
+    /* background: antiquewhite; */
+    background-image: url('../blog_back/3.png');
+    background-repeat: repeat
 }
 .col-1{
     float: left;

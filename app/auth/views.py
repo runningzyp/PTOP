@@ -40,16 +40,3 @@ def register():
         return render_template('auth/success.html', userkey=userkey)
     return render_template('auth/register.html', form=form)
 
-
-@auth.route('/admin-login', methods=['GET', 'POST'])
-def admin_login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(
-            email=form.email.data, password=form.password.data).first()
-        print(user)
-        if user is not None:
-            login_user(user, form.remember_me.data)
-            return redirect(request.args.get('next')or url_for('main.index'))
-        flash('禁止登录')
-    return render_template('auth/admin_login.html', form=form)

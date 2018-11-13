@@ -19,7 +19,8 @@
 		<h1>香菜的小书桌</h1>
 		<nav class="codrops-demos">
 			<!-- <a class="current-demo" href="">文本模式</a> -->
-			<!-- <a href="">常规模式</a> -->
+			<a href="{{url_for('main.about')}}">关于我</a>
+			<a id = 'change' href="#">更换壁纸</a>
 		</nav>
 		<span class="support-note">欢迎来到香菜的博客</span>
 	</header>
@@ -55,11 +56,12 @@
 						<div class="bk-content" id = 'funny'>
 								{% if articles[2] %}
 							<div  class="title">
-								<p>{{articles[2][0].id}}</p>
-
+								<a href="{{url_for('main.blog',id=articles[2][0].id)}}">
+								<p>{{articles[2][0].title}}</p>
+								</a>
 								</div>
 							<div  class="content">
-								<p>{{articles[2][0].title}}</p>
+								<p>{{articles[2][0].id}}</p>
 							</div>	
 								{% endif %}		
 						</div>
@@ -121,9 +123,9 @@
 							<div class="bk-content" id = 'study'>
 									{% if articles[0] %}
 									<div  class="title">
-										
+										<a href="{{url_for('main.blog',id=articles[0][0].id)}}">
 										{{articles[0][0].title}}
-									
+										</a>
 									</div>	
 									<div  class="content">天衢不错</div>	
 									{% endif %}		
@@ -187,8 +189,10 @@
 								<div class="bk-content" id = 'essay'>
 										{% if articles[1] %}
 										<div  class="title">
-											
-											{{articles[1][0].title}}</div>	
+											<a href="{{url_for('main.blog',id=articles[1][0].id)}}">
+											{{articles[1][0].title}}
+											</a>
+										</div>	
 											
 										<div  class="content"></div>
 										{% endif %}			
@@ -229,7 +233,7 @@
 </div><!-- /container -->
 {% endblock %}
 
-<script src="../static/js/jquery-1.11.1.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script>
 		
 		counts = {{counts}};
@@ -247,6 +251,7 @@
 		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script src="../static/js/books1.js"></script>
+<script src="../static/js/book_ext.js"></script>
 <script>
 	
 	$(function () {

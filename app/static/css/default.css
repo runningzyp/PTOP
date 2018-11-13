@@ -46,7 +46,9 @@ body {
     font-size: 15px;
     color: #333;
     overflow: scroll;
-    overflow-x: hidden;
+	overflow-x: hidden;
+	background-image	: url("../blog_back/7.png");
+	background-repeat :repeat
 }
 
 .demo-2 body {

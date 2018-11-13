@@ -163,17 +163,25 @@
 	/*线性渐变：从左到底（也就是从左边到最底部，斜切过来），
        透明50%的宽度渐变到rgba(0,0,0,.2) 0,，再到rgba(0,0,0,.4))
         background-size：100% 0
-        不重复或平铺 
-      */
-	width: 1.73em;
-	height: 3em;
-	transform: translateY(-1.3em) rotate(-30deg);
-	/*translateY(-1.3em)：y轴方向平移-1.3em，就向上移动出去了一点
-          rotate(-30deg)：  平面旋转-30度
-      */
+		不重复或平铺 
+		
+	  */
 	transform-origin: bottom right;
 	border-bottom-left-radius: inherit;
 	box-shadow: -.2em .2em .3em -.1em rgba(0, 0, 0, .15);
+	border-bottom-left-radius: 5px;
+
+
+	/* width: 1.73em;
+	height: 3em;
+	transform: translateY(-1.3em) rotate(-30deg); */
+	/*translateY(-1.3em)：y轴方向平移-1.3em，就向上移动出去了一点
+          rotate(-30deg)：  平面旋转-30度
+      */
+	width: 1.15em;
+	height: 2em;
+	
+    transform: translateY(-1em)rotate(-35deg);
 	
 }
 

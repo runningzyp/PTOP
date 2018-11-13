@@ -85,6 +85,16 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def to_json(self):
+        json_user = {
+            'id': self.id,
+            'userkey': self.userkey,
+            'username': self.username,
+            "role_id": self.role_id,
+            "role": Role.query.filter(Role.id == self.role_id).first().name
+        }
+        return json_user
+
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
@@ -115,7 +125,7 @@ class Article(db.Model):
     title = db.Column(db.Text)
     body = db.Column(db.Text)
     blog_images = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
     body_html = db.Column(db.Text)
 
@@ -125,8 +135,10 @@ class Article(db.Model):
             'url': url_for('main.blog', id=self.id, _external=True),
             'title': self.title,
             'body': self.body,
-            'body_html': self.body_html,
+            # 'body_html': self.body_html,
             'timestamp': self.timestamp,
+            "article_type_id": self.article_type_id,
+            "article_type": ArticleType.query.filter(ArticleType.id == self.article_type_id).first().name,
             'blog_imgaes': self.blog_images
         }
         return json_article

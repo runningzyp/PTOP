@@ -4,7 +4,6 @@
 
 {% block head %}
 {{ super() }}
-
 <link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
 <link rel="icon" href="../static/ico/my.ico" type="image/x-icon">
 
@@ -27,5 +26,6 @@
 
 {% block scripts %}
 {{ super() }}
-{{ moment.include_moment() }}
+{{ moment.include_moment(local_js="https://cdn.bootcss.com/moment.js/2.22.1/moment.min.js") }}
+<!-- {{ moment.lang('zh-cn')}}    -->
 {% endblock %}

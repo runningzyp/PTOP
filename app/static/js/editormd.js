@@ -1071,14 +1071,14 @@
                     return false;
                 }
 
-                if (top - editor.offset().top > 10 && top < editor.height())
-                {
-                    toolbar.css({
-                        position : "fixed",
-                        width    : editor.width() + "px",
-                        left     : ($window.width() - editor.width()) / 2 + "px"
-                    });
-                }
+                // if (top - editor.offset().top > 10 && top < editor.height())
+                // {
+                //     toolbar.css({
+                //         position : "fixed",
+                //         width    : editor.width() + "px",
+                //         left     : ($window.width() - editor.width()) / 2 + "px"
+                //     });
+                // }
                 else
                 {
                     toolbar.css({
@@ -2633,6 +2633,7 @@
                 editor.css({
                     width    : $(window).width(),
                     height   : $(window).height()
+
                 }).addClass(fullscreenClass);
 
                 this.resize();

@@ -19,6 +19,7 @@ login_manager.login_message = "请登录后 访问此页."
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    app.config['BOOTSTRAP_SERVE_LOCAL'] = True  # 使用本地cdn
     config[config_name].init_app(app)
 
     bootstrap.init_app(app)
@@ -31,5 +32,6 @@ def create_app(config_name):
     app.register_blueprint(main_blueprint)
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
-
+    from .admin import admin as admin_blueprit
+    app.register_blueprint(admin_blueprit, url_prefix='/admin')
     return app
