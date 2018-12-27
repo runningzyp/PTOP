@@ -2,7 +2,7 @@
     z-index:0;
 }
 .container-my{
-    border: red solid;
+    /* border: red solid; */
     margin-top: 50px; 
     height: 100%;
 }
@@ -45,24 +45,44 @@
   .content >.articles{
       width: 100%;
       height: 100%;
-      border: blue solid;
+      padding: 0 20px;
+      /* border: blue solid; */
   }
   
   .content >.write-article{
     width: 100%;
-    height: 800px;
-    border: blue solid;
+    height: 100%;
+    /* border: blue solid; */
 }
   .content >.users{
     width: 100%;
-    height: 900px;
-    border: blue solid;
+    height: 100%;
+    padding: 0 20px;
+
+    /* border: blue solid; */
   }
 .pagination-my{
     position: absolute;
     right: 20px;;
 }
 
+.btn-my{
+    border: none;
+    color: #fff;
+    display: inline-block;
+    padding: 3px 15px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-right: 4px;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+}
+/* 表格内容居中 */
+.table th, .table td { 
+  text-align: center;
+  vertical-align: middle!important;
+  }
 
 
 

@@ -34,6 +34,8 @@ $(document).ready(function () {
                         "<td>" + data.article[i].title + "</td>" +
                         "<td>" + moment(data.article[i].timestamp).locale('zh-cn').utcOffset(8).format('lll') + "</td>" +
                         "<td>" + data.article[i].article_type + "</td>" +
+                        "<td><button type='button' class='btn-my btn-primary'><span class='glyphicon glyphicon-pencil'> 修改</span></button>"+
+                        "<button type='button' style='margin-left:10px' class='btn-my btn-danger'><span class='glyphicon glyphicon-trash'> 删除</span></button></td>"+
                         "</tr>"
 
                     $("#tbarticle").append(txt);
@@ -45,7 +47,7 @@ $(document).ready(function () {
             }
         });
     }
-    // 获取文章列表
+    // 获取用户列表
     function getuser(current_page) {
         $.ajax({
             url: $SCRIPT_ROOT + '/admin/get-user',
@@ -68,6 +70,7 @@ $(document).ready(function () {
                         "<td>" + data.user[i].username + "</td>" +
                         "<td>" + data.user[i].userkey + "</td>" +
                         "<td>" + data.user[i].role + "</td>" +
+                        "<td><button type='button' style='margin-left:10px' class='btn-my center-block btn-danger'>删除用户</button></td>"+
                         "</tr>"
 
                     $("#tbuser").append(txt);

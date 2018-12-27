@@ -112,7 +112,8 @@ def admin():
     global BLOG_IMAGE
 
     form = ArticleForm()
-    form.article_type_id.choices = [(v.id, v.name) for v in ArticleType.query.all()]
+    form.article_type_id.choices = [(v.id, v.name)
+                                    for v in ArticleType.query.all()]
     if form.validate_on_submit():
 
         article = Article(
@@ -125,8 +126,11 @@ def admin():
         return redirect(url_for('main.blogs'))
     print(BLOG_IMAGE)
     BLOG_IMAGE = ''
-    pagination = Article.query.paginate(
+    article_pagination = Article.query.paginate(
         1, per_page=10, error_out=False)
-    pages = [x+1 for x in range(pagination.pages)]
+    user_pagination = User.query.paginate(
+        1, per_page=10, error_out=False)
+    article_pages = [x+1 for x in range(article_pagination.pages)]
+    user_pages = [x+1 for x in range(user_pagination.pages)]
     return render_template('admin/admin.html', form=form,
-                           pages=pages)
+                           article_pages=article_pages, user_pages=user_pages)
