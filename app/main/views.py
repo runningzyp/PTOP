@@ -23,7 +23,7 @@ from aliyunsdkcore import client
 from aliyunsdksts.request.v20150401 import AssumeRoleRequest
 import oss2
 
-from ..net_tools import appserver
+from ..net_tools import ali_oss
 
 # 阿里云模块
 
@@ -57,7 +57,7 @@ def blogs():
             'essay': 2,
             'funny': 3
         }
-        data = json.loads(request.get_data())
+        data = json.loads(request.get_data().decode('utf8'))
         print(data)
         page = data['page']
         article_type = data['article_type']
@@ -92,44 +92,7 @@ def blogs():
         articles.append(pagination.items)
         print(pagination.items)
         counts.append(pagination.total)
-        # print(counts[i])
-        # print(articles[i][0].article_type_id)
-    # print(counts)
-    # print(articles)
-    # print('1:')
-    # print(type(articles[0]))
-    # if articles[0]:
-    #     print('存在')
-    # print(articles[0]is None)
-    # print(articles[1]is None)
-    # print(articles[2]is None)
     return render_template('blogs.html', articles=articles, counts=counts)
-    # flash('请输入正确的令牌')
-    # articles = Article.query.order_by(Article.timestamp.desc()).all()
-    # essay_s = Article.query.filter_by(article_type_id='2').order_by(
-    #     Article.timestamp.desc()).all()
-    # funny_s = Article.query.filter_by(article_type_id='3').order_by(
-    #     Article.timestamp.desc()).all()
-    # study_s = Article.query.filter_by(article_type_id='1').order_by(
-    #     Article.timestamp.desc()).all()
-    # article_essay = []
-    # article_funny = []
-    # article_study = []
-    # articles = [article_essay, article_funny, article_study]
-    # count_1 = Article.query.filter_by(article_type_id='2').count()
-    # count_2 = Article.query.filter_by(article_type_id='3').count()
-    # count_3 = Article.query.filter_by(article_type_id='1').count()
-
-    # for i in range(0, count_1, 4):  # 每页显示4个数据,下同
-    #     article_essay.append(essay_s[i:i+4])
-    # for i in range(0, count_2, 4):
-    #     article_funny.append(funny_s[i:i+4])
-    # for i in range(0, count_3, 4):
-    #     article_study.append(study_s[i:i+4])
-    # return render_template('blogs.html', article_essay=article_essay,
-    #                        article_funny=article_funny,
-    #                        article_study=article_study,
-    #                        test={'a': 2, 'b': 3})
 
 
 @main.route('/blog/<int:id>')
@@ -153,7 +116,40 @@ def user(username):
         return render_template('404.html'), 404
 
     data = user.data.order_by(Data.timestamp.asc()).all()
-    return render_template('user.html', data=data, user=user)
+    host = ali_oss.get_host()+'/'
+    return render_template('user.html', data=data, user=user, host=host)
+
+
+@main.route('/get-token', methods=['POST', 'GET'])
+def get_token():
+    user_dir = current_user.email+"/"
+    if request.method == 'POST':
+        return ali_oss.get_token(user_dir)
+
+
+@main.route('/call-back', methods=['POST', 'GET'])
+def call_back():
+    if request.method == 'POST':
+
+        host = ali_oss.get_host()
+
+        sec_filename = request.form.get('filename')
+        filename = sec_filename.split('/')[-1]
+        email = sec_filename.split('/')[0]
+        user = User.query.filter_by(email=email).first()
+        bucket = request.form.get('bucket')
+        filetype = request.form.get('mimeType')  # 文件类型
+        
+        dt = datetime.datetime.utcnow()
+        
+        data = Data(filename=filename, sec_filename=sec_filename,
+                    filetype=filetype,
+                    author=user)
+        db.session.add(data)
+        
+        url = host+'/' + sec_filename
+        return json.dumps({'filename': filename, 'url': url})
+    return 'success'
 
 
 @main.route('/_sendmessage')
@@ -162,7 +158,7 @@ def sendmessage():
     text = request.args.get('text', '')
     device_type = request.args.get('device_type', '')
     if text is not None:
-        data = Data(text=text, device_type=device_type,
+        data = Data(text=text,
                     author=current_user._get_current_object())
         db.session.add(data)
     return jsonify(result='success')

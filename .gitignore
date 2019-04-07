@@ -15,3 +15,4 @@ venv
 .DS_Store
 /.idea
 migrations/
+ali_config.json

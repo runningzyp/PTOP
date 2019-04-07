@@ -43,7 +43,7 @@ def admin_logout():
 @admin_required
 def get_blog():
     if request.method == "POST":
-        data = json.loads(request.get_data())
+        data = json.loads(request.get_data().decode('utf-8'))
         page = int(data['page'])
         pagination = Article.query.order_by(Article.timestamp.desc()).paginate(
             page, per_page=10, error_out=False)
@@ -60,7 +60,7 @@ def get_blog():
 @admin_required
 def get_user():
     if request.method == "POST":
-        data = json.loads(request.get_data())
+        data = json.loads(request.get_data().decode('utf-8'))
         page = int(data['page'])
         pagination = User.query.paginate(
             page, per_page=10, error_out=False)
@@ -78,7 +78,7 @@ def get_user():
 def upload_blog_img():
     if request.method == "POST":
         # 阿里云主账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM账号进行API访问或日常运维，请登录 https://ram.console.aliyun.com 创建RAM账号。
-        auth = oss2.Auth('LTAIB5vPYWqfntRP', 'MGrtfdOjsjhf38xfLeLajRBp9iolTa')
+        auth = oss2.Auth('LTAI1AhNdXlpWkWW', 'BFyxllZgk9keS8BY68WQcag9DdSCj5')
         # Endpoint以杭州为例，其它Region请按实际情况填写。
         bucket = oss2.Bucket(
             auth, 'http://oss-cn-shanghai.aliyuncs.com',
@@ -115,7 +115,6 @@ def admin():
     form.article_type_id.choices = [(v.id, v.name)
                                     for v in ArticleType.query.all()]
     if form.validate_on_submit():
-
         article = Article(
             body=form.body.data,
             title=form.title.data,

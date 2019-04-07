@@ -68,14 +68,14 @@ class User(UserMixin, db.Model):
         super(User, self).__init__(**kwargs)
         if self.role is None:
             # print(current_app.config['FLASKY_ADMIN'])
-            #print(self.email == current_app.config['FLASKY_ADMIN'])
+            # print(self.email == current_app.config['FLASKY_ADMIN'])
             if self.email == current_app.config['FLASKY_ADMIN']:
                 self.role = Role.query.filter_by(permissions=0xff).first()
                 self.userkey = None
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
 
-    def can(self, permissions):
+    def can(self, permissions): 
         return self.role is not None and \
             (self.role.permissions & permissions) == permissions
 
@@ -113,8 +113,7 @@ class Data(db.Model):
     text = db.Column(db.Text)
     filename = db.Column(db.String(128), default=None)
     sec_filename = db.Column(db.String(128), default=None)
-    filetype = db.Column(db.String(10), default=None)
-    device_type = db.Column(db.String(10), default=None)
+    filetype = db.Column(db.String(128), default=None)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -135,7 +134,7 @@ class Article(db.Model):
             'url': url_for('main.blog', id=self.id, _external=True),
             'title': self.title,
             'body': self.body,
-            # 'body_html': self.body_html,
+            'body_html': self.body_html,
             'timestamp': self.timestamp,
             "article_type_id": self.article_type_id,
             "article_type": ArticleType.query.filter(ArticleType.id == self.article_type_id).first().name,

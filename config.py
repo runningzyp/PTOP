@@ -1,8 +1,10 @@
 import os
+import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    
     SECRET_KEY = os.environ.get('SECRET_KEY') or'helloworld'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -17,6 +19,7 @@ class Config:
     UPLOAD_FOLDER = os.getcwd() + "/files/"  # 用户上传目录
     FLASKY_ARTICLE_PER_PAGE = 1  # 每页显示数量
 
+   
     @staticmethod
     def init_app(app):
         pass
@@ -28,7 +31,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
         os.path.join(basedir, 'data-dev.sqlite')
     '''
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:zhan@1996@localhost/dev?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:1996@localhost/dev?charset=utf8mb4'
 
 
 class TestingConfig(Config):
