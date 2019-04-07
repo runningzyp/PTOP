@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}{{current_user.username}}的{% endblock %}
+{% block head %}
+{{super()}}
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"  href="../static/css/window.css">
+{% endblock %}
+
+
+{% block body %} 
+
+     <div class="window">
+         <div class="move">
+        <div class="window-head">
+            <div class="col-1 text-center">
+                <a href="{{url_for('main.userlogout')}}">
+                        <span class="glyphicon glyphicon-remove " style="font-size: 10px;color:rgb(248, 248, 248);margin-top:15px; " ></span>
+                </a>
+            </div>        
+            <div class="col-8 text-center">
+                    <div class="window-head-title">欢迎使用,{{current_user.username}}</div>
+            </div>
+            <div class="col-1 text-center">
+                <a href="#">
+                        <span class="glyphicon glyphicon-user" style="font-size: 20px;color:rgb(248, 248, 248); margin-top:10px;" ></span>
+                </a>
+            </div>
+        </div>
+        <div class="window-show">              
+                        {% for dat in data %}
+                        {% if dat.text or dat.sec_filename %}
+                          <div class="window-show-line">
+                               <div class="row clearfix">
+                                       <div class="col-md-1 col-xs-2 column" style="padding-left:15px;padding-right: 0;">
+                                               <a href="{{url_for('.user',username=dat.author.username)}}">
+                                                   <img class="profile-thumbnail img-responsive" src="../static/ico/web.png">
+                                               </a>                                                            
+                                       </div>
+                                      
+                                       <div class="col-md-7 col-xs-8 column" style="padding-left:0px;" >
+                                           
+                                           <div class="window-show-data">
+                                           <!-- <div class="post-date">{{dat.timestamp}}</div> -->
+                                           {% if dat.text %}
+                                           <div>{{dat.text}}</div>
+                                           {% endif %}
+                                           {% if dat.filename %}
+                                           <a href="{{host}}{{dat.sec_filename}}">{{dat.filename}}</a>
+                                           {% endif %}
+                                        </div>
+                                        
+                                       </div>
+                                       <div class="col-md-3 column">
+                                       </div>
+                                       <div class="col-md-1 column">
+                                       </div>
+                               </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+        </div>
+        
+        <div class="window-foot">
+             <form  name= "text-form" id ="form" action="" method="post" >
+                <div class="foot-first">
+                        <div class="row clearfix">
+                              <div class="col-xs-10 column" style="padding-right: 0">
+                                  <input type="text" class="window-input" name="text" id= "text">
+                                  </div>
+                              <div class="col-xs-2 column" style="padding-left: 0">
+                                  <div class="window-submit">
+                                   <div id="text-submit" name="text-submit" class="btn btn-default btn-block btn-primary">提交 </div>
+                                  </div>
+                              </div>
+                          </div>
+                </div>
+                <div class="foot-second">
+                      <!--  <div class="row clearfix">
+                                <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/1.png') }}"> </div>
+                                <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/2.png') }}"></div>
+                                <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/3.png') }}"></div>
+                                <div class="col-md-3 col-xs-3 column"><img class="img-responsive center-block"  src="{{ url_for('static', filename='ico/4.png') }}"></div>
+                        </div>  -->                                           
+                </div>
+         </form>
+        </div>
+        <div class="window-hidden" >
+            <form  name= "file-form" id ="file-form" action="" method="post" enctype="multipart/form-data"> 
+                <input type="file" name="file" id= "file">              
+                <div id="file-submit" name="file-submit" class="btn btn-default btn-block btn-primary">提交 </div>
+            <div class="Aqua">
+                <div class="aqua-left">
+                    <img class="img-responsive"  src="../static/img/backgrounds/box.png">
+                </div>
+                <div class="aqua-right">
+                    <img class="img-responsive"  src="../static/img/backgrounds/Aqua_nobox.png">
+                 </div>
+               
+            </div>
+             </form>
+            </div>
+       
+        </div> <!-- move -->
+     </div>
+    {% block scripts %}
+     {{super()}}
+    <script src="../static/js/window.js"></script>
+    <script type=text/javascript>
+    
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    var ajaxToken = {} //上传token
+    
+    $(document).ready(function () {
+        get_token();
+    });
+    function get_token() {
+            $.ajax({
+            url: $SCRIPT_ROOT+"/get-token",
+            type: "POST",
+            dataType: "json", //json 还是jsonp看情况
+            timeout: 2000,
+            async: true,
+            cache: false,
+            contentType: "false",
+            processData: false,
+            success:function(returndata){
+                ajaxToken= returndata;
+            }
+        });
+    }
+
+    $('#text-submit').click(function() {  // 等于按钮
+        if ($('#text').val()==''){
+            alert('none');
+        }else{
+        $.getJSON($SCRIPT_ROOT + '/_sendmessage', {
+        text: $('#text').val(),
+        device_type: 'web'
+        }, function(data) {
+            alert(data.result);
+            $("input[name='text']").val("").focus();
+            $(".window-show").append($add_text);
+            $(".window-hide-line").show(1000);
+            $('.window-show').scrollTop( $('.window-show')[0].scrollHeight );
+        }); 
+        }
+        $add_text ='<div class="window-hide-line">'+
+                '<div class="row clearfix">'+
+                    '<div class="col-md-1 col-xs-2 column" style="padding-left:15px;padding-right: 0;">'+
+                        '<a href="{{url_for('.user',username=current_user.username)}}">'+
+                            '<img class="profile-thumbnail img-responsive" src="{{ url_for('static', filename='ico/web.png') }}">'+
+                        '</a>'+
+                    '</div>'+
+
+                    '<div class="col-md-7 col-xs-8 column" style="padding-left:0px;">'+
+
+                        '<div class="window-show-data">'+
+                                '<div>' + $('#text').val() +'</div>'+
+                        '</div>'+
+
+                    '</div>'+
+                    '<div class="col-md-3 column">'+
+                    '</div>'+
+                    '<div class="col-md-1 column">'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+      
+  });
+
+
+$('#file-submit').click(function() { 
+
+var file = document.getElementById("file");
+var current_time = Date.parse(new Date());//获取当前时间
+current_time /= 1000; // gmt 时间精确到秒即可
+
+if (current_time>ajaxToken["expire"]){
+    get_token()
+}
+var dir = ajaxToken['dir']
+var formData = new FormData();
+formData.append('OSSAccessKeyId', ajaxToken['accessid']);
+formData.append('policy', ajaxToken['policy']);
+formData.append('Signature', ajaxToken['signature']);
+formData.append('key', dir +'[' + current_time + ']' + file.files[0].name); //文件名保存为当前时间戳+文件名
+formData.append('success_action_status', 200); // 指定返回的状态码
+formData.append('callback', ajaxToken['callback']);
+formData.append("file", file.files[0]); //file 必须是最后一个域
+$.ajax({
+    url: ajaxToken['host'],
+    type: 'POST',
+    data: formData,
+    dataType: "json",
+    
+    cache: false,
+    processData: false, //不需要进行序列化处理
+    async: true, //发送同步请求
+    contentType: false,
+    success: function (result) {
+        add_files(result)
+    },
+    error: function () {
+      alert("上传超时");
+    }
+    });
+});
+
+
+function add_files(data) {
+    var $file_url= data.url;
+    var $file_name= data.filename;
+    var $add_file ='<div class="window-hide-line">'+
+            '<div class="row clearfix">'+
+                '<div class="col-md-1 col-xs-2 column" style="padding-left:15px;padding-right: 0;">'+
+                    '<a href="{{url_for('.user',username=current_user.username)}}">'+
+                        '<img class="profile-thumbnail img-responsive" src="{{ url_for('static', filename='ico/web.png') }}">'+
+                    '</a>'+
+                '</div>'+
+
+                '<div class="col-md-7 col-xs-8 column" style="padding-left:0px;">'+
+
+                    '<div class="window-show-data">'+
+                    '<a href =\"'+  $file_url+  '\"'+ 'target='+'\"'+'_blank'+'\"'+ '>'+ $file_name +'<\/a>'+
+                    '</div>'+
+
+                '</div>'+
+                '<div class="col-md-3 column">'+
+                '</div>'+
+                '<div class="col-md-1 column">'+
+                '</div>'+
+            '</div>'+
+        '</div>';
+    
+    $(".window-show").append($add_file);
+    $(".window-hide-line").show(1000);
+    $('.window-show').scrollTop( $('.window-show')[0].scrollHeight );
+　}
+
+</script>
+    
+     
+    {% endblock %}
+</body>
+{% endblock %}

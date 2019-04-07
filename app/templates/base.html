@@ -1,0 +1,31 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}一个耿直的网站{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
+<link rel="icon" href="../static/ico/my.ico" type="image/x-icon">
+
+{% endblock %}
+
+{% block content %}
+
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}
+    {% endblock %}
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+<!-- {{ moment.lang('zh-cn')}}    -->
+{% endblock %}

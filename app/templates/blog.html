@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}{{blog.title}}{% endblock %}
+{% block head %}
+
+{{ super() }}
+<!-- <link rel="stylesheet" href="{{url_for('static',filename='css/editormd.preview.css')}}"> -->
+<link rel="stylesheet" href="../static/css/preview.css">
+<style>
+    #blog-editormd-view{
+    /* background-image: url('../static/img/blog_image/blog_back.jpg') */
+    }
+    @media (min-width: 768px){
+    img {
+    max-width: 400px !important ;
+    }
+    }
+    .editormd-html-preview {
+
+    font-size: 16px;
+    background-color: #fff;
+    }
+
+    h1{
+    text-align: center;
+    }
+    .paper{
+        padding: 20px;
+        border:1px solid ;
+        border-color:#e7e7e7;
+		box-shadow: 15px 5px 20px #CCC
+    }
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="row clearfix">
+    <div class="col-md-2 column">
+    </div>
+    <div class="col-md-8 column">
+
+        <div class="paper">
+            <div id="blog-view">
+                <textarea style="display:none;">{{blog.body}}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 column">
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{%block scripts%}
+{{super()}}
+<script src="../static/editormd/lib/marked.min.js"></script>
+<script src="../static/editormd/lib/prettify.min.js"></script>
+<script src="../static/editormd/lib/raphael.min.js"></script>
+<script src="../static/editormd/lib/underscore.min.js"></script>
+<script src="../static/editormd/lib/sequence-diagram.min.js"></script>
+<script src="../static/editormd/lib/flowchart.min.js"></script>
+<script src="../static/editormd/lib/jquery.flowchart.min.js"></script>
+<script src="../static/js/editormd.js"></script>
+
+<script type="text/javascript">
+    var viewEditor;
+    $(function () {
+        viewEditor = editormd.markdownToHTML("blog-view", { //注意：这里是上面DIV的id
+            htmlDecode: "style,script,iframe",
+            emoji: true,
+            taskList: true,
+            tex: true, // 默认不解析
+            flowChart: true, // 默认不解析
+            sequenceDiagram: true, // 默认不解析
+            codeFold: true,
+        });
+    });
+
+    $(document).ready(function () {
+
+        $("img").addClass("img-responsive center-block");
+    });
+</script>
+
+
+{% endblock %}

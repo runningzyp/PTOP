@@ -1,0 +1,37 @@
+<script>
+    OssUpload(param, file, fileName, callBack) {
+        var policyBase64 = Base64.encode(param.policy);
+        var signature = param.signature.split(':')[1];
+        var filePathName = param.filePath + "/" + param.fileName;
+        var fileFullName = param.contentHostName + "/" + filePathName;
+        var request = new FormData();
+        request.append('OSSAccessKeyId', param.accessKeyId);
+        request.append('policy', policyBase64);
+        request.append('Signature', signature);
+        request.append('key', filePathName);
+        for (var i in param.metaDatas) {
+            request.append(i, param.metaDatas[i]);
+        }
+        request.append('file', file);
+        request.append('submit', "Upload to OSS");
+        $.ajax({
+            url: param.contentHostName,
+            data: request,
+            processData: false,
+            cache: false,
+            async: false,
+            contentType: false,
+            //关键是要设置contentType 为false,不然发出的请求头 没有boundary 
+            //该参数是让jQuery去判断
+            contentType type: "POST",
+            success: function (data, textStatus, request) {
+                if (textStatus === "nocontent") {
+                    callBack(fileFullName);
+                    alert("success!");
+                } else {
+                    alert(textStatus);
+                }
+            }
+        });
+    }
+</script>
