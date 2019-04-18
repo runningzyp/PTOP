@@ -31,7 +31,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
         os.path.join(basedir, 'data-dev.sqlite')
     '''
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:1996@localhost/dev?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:zhan@1996@localhost/dev?charset=utf8mb4'
 
 
 class TestingConfig(Config):

@@ -53,6 +53,19 @@ def get_blog():
             'count': pagination.total,
             'pages': pagination.pages
         })
+@admin.route('/delete-blog', methods=['GET', 'POST'])
+@admin_required
+def delete_blog():
+    if request.method == "POST":
+        data = json.loads(request.get_data().decode('utf-8'))
+        id = data['id']
+        aritcle = Article.query.get(id)
+        if aritcle is not None:
+            db.session.delete(aritcle)
+            return jsonify({
+                'status': '200',
+                'message':'删除成功'
+            })
 
 
 # 获取用户列表

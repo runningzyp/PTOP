@@ -30,12 +30,12 @@ $(document).ready(function () {
                 $("#tbarticle").empty();
                 for (var i = 0; i < data.article.length; i++) {
                     var txt = "<tr>" +
-                        "<td>" + data.article[i].id + "</td>" +
+                        "<td class = 'id'>" + data.article[i].id + "</td>" +
                         "<td>" + data.article[i].title + "</td>" +
                         "<td>" + moment(data.article[i].timestamp).locale('zh-cn').utcOffset(8).format('lll') + "</td>" +
                         "<td>" + data.article[i].article_type + "</td>" +
                         "<td><button type='button' class='btn-my btn-primary'><span class='glyphicon glyphicon-pencil'> 修改</span></button>"+
-                        "<button type='button' style='margin-left:10px' class='btn-my btn-danger'><span class='glyphicon glyphicon-trash'> 删除</span></button></td>"+
+                        "<button type='button' style='margin-left:10px' class='btn-my btn-danger delete-article'><span class='glyphicon glyphicon-trash'> 删除</span></button></td>"+
                         "</tr>"
 
                     $("#tbarticle").append(txt);
@@ -47,6 +47,32 @@ $(document).ready(function () {
             }
         });
     }
+    // 删除博客
+    $("tbody").on('click',".delete-article",function(){
+
+        var $id = $(this).parents('tr').find('.id').text()
+        var $ret =$(this).parents('tr')
+       
+        $.ajax({
+            url: $SCRIPT_ROOT + '/admin/delete-blog',
+            type: "POST",
+            data: JSON.stringify({
+                "id":$id
+            }),
+            async: true,
+            cache: false,
+            contentType: "application/json",
+            dataType: "json",
+            // processData:false,
+            success: function (data) {
+                if (data.status =='200'){
+                    alert(data.message)
+                    $ret.remove()
+                }
+            }
+        });
+         
+    })
     // 获取用户列表
     function getuser(current_page) {
         $.ajax({

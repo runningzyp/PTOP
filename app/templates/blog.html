@@ -1,39 +1,55 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% block title %}{{blog.title}}{% endblock %}
-{% block head %}
-
-{{ super() }}
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- <link rel="stylesheet" href="{{url_for('static',filename='css/editormd.preview.css')}}"> -->
-<link rel="stylesheet" href="../static/css/preview.css">
+<link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
+<link rel="icon" href="../static/ico/my.ico" type="image/x-icon">
+<title>{{blog.title}}</title>
+
+
+<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/css/editormd.min.css">
+<link rel="stylesheet" href="../static/css/editormd.preview.css">
+
 <style>
     #blog-editormd-view{
     /* background-image: url('../static/img/blog_image/blog_back.jpg') */
     }
-    @media (min-width: 768px){
-    img {
-    max-width: 400px !important ;
-    }
-    }
+  
     .editormd-html-preview {
-
     font-size: 16px;
     background-color: #fff;
     }
 
-    h1{
-    text-align: center;
-    }
+   
     .paper{
-        padding: 20px;
+        padding: 20px 40px;
         border:1px solid ;
         border-color:#e7e7e7;
 		box-shadow: 15px 5px 20px #CCC
     }
+    p{
+        line-height: 1.8em;
+    }
+    @media (min-width: 768px){
+    img {
+        max-width: 400px !important ;
+    }
+    
+    }
+    @media screen and (max-width: 700px){
+        img {
+            max-width: 400px !important ;
+        }
+        .paper{
+            padding: 20px 0px;
+            border:1px solid ;
+            border-color:#e7e7e7;
+            box-shadow: 15px 5px 20px #CCC
+        }
+    
+    }
 </style>
-{% endblock %}
-
-{% block page_content %}
+</head>
 <div class="row clearfix">
     <div class="col-md-2 column">
     </div>
@@ -50,11 +66,9 @@
 </div>
 
 
-{% endblock %}
 
-
-{%block scripts%}
-{{super()}}
+<script src="/static/bootstrap/jquery.min.js?bootstrap=3.3.7.1.dev1"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js?bootstrap=3.3.7.1.dev1"></script>
 <script src="../static/editormd/lib/marked.min.js"></script>
 <script src="../static/editormd/lib/prettify.min.js"></script>
 <script src="../static/editormd/lib/raphael.min.js"></script>
@@ -84,5 +98,3 @@
     });
 </script>
 
-
-{% endblock %}

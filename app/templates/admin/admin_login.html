@@ -16,7 +16,7 @@
     <div class="col-xs-8 column">
         
             {% if current_user.is_authenticated %}
-            <p style="text-align: center">您已登录,<a href="{{url_for('admin.admin_logout')}}"> 退出登录</a></p>
+            <p style="text-align: center">您已登录,<a href="{{url_for('main.userlogout')}}"> 退出登录</a></p>
             {% else %}
             <form action="" method="post" class="form" role="form">
                     <!-- {{ wtf.quick_form(form) }} -->

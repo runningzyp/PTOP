@@ -18,7 +18,7 @@ login_manager.login_message = "请登录后 访问此页."
 
 def create_app(config_name):
     app = Flask(__name__)
-    app.config.from_object(config[config_name])
+    app.config.from_object(config["default"])
     app.config['BOOTSTRAP_SERVE_LOCAL'] = True  # 使用本地cdn
     config[config_name].init_app(app)
 

@@ -158,7 +158,6 @@ var Books = (function () {
                                 title.find("a").attr('href', str);
 								title.find("p").text(data.article.title);
                                 content.html(data.article.body_html)
-                                alert(data.article.body_html)
 						　　}, 
 						　　error: function (data) { 
 							　　　　　alert('error');
