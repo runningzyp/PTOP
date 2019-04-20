@@ -4,7 +4,7 @@ $(document).ready(function () {
 
         if (i < 10) {
             $("body").css({
-                "background-image": "url('../static/blog_back/" + i + ".png')"
+                "background-image": "url('/static/blog_back/" + i + ".png')"
             });
             i++;
         } else {

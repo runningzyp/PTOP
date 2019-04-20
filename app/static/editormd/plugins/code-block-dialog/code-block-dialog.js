@@ -83,7 +83,7 @@
             else 
             {      
                 var dialogHTML = "<div class=\"" + classPrefix + "code-toolbar\">" +
-                                        dialogLang.selectLabel + "<select><option selected=\"selected\" value=\"\">" + dialogLang.selectDefaultText + "</option></select>" +
+                                        dialogLang.selectLabel + "<select style = 'display:block'><option selected=\"selected\" value=\"\">" + dialogLang.selectDefaultText + "</option></select>" +
                                     "</div>" +
                                     "<textarea placeholder=\"coding now....\" style=\"display:none;\">" + selection + "</textarea>";
 

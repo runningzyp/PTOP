@@ -21,5 +21,4 @@ class ArticleForm(FlaskForm):
     body = TextAreaField('今天心情怎么样', validators=[Required()])
     article_type_id = SelectField(
         choices='', coerce=int)
-    title = StringField('请输入标题')
-    submit = SubmitField("提交")
+    title = StringField()

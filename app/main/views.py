@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import time
 
 from flask import render_template, session, redirect, url_for, current_app
 from flask import request, flash
@@ -19,18 +20,10 @@ from werkzeug import secure_filename  # 安全的文件名
 
 from ..decorators import admin_required
 
-from aliyunsdkcore import client
-from aliyunsdksts.request.v20150401 import AssumeRoleRequest
-import oss2
 
 from ..net_tools import ali_oss
 
-# 阿里云模块
 
-import time
-import base64
-UPLOAD_FOLDER = os.getcwd() + "/files/"
-BLOG_IMAGE = ''
 
 
 @main.route('/', methods=['GET', 'POST'])

@@ -10,6 +10,7 @@ from markdown import markdown
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
+from flask_sqlalchemy import event
 #from .decorators import admin_required
 
 
@@ -75,7 +76,7 @@ class User(UserMixin, db.Model):
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
 
-    def can(self, permissions): 
+    def can(self, permissions):
         return self.role is not None and \
             (self.role.permissions & permissions) == permissions
 
@@ -123,10 +124,28 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
     body = db.Column(db.Text)
-    blog_images = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    finish_time = db.Column(db.DateTime, index=True)
+    last_change_time = db.Column(
+        db.DateTime, index=True, default=datetime.utcnow)
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
-    body_html = db.Column(db.Text)
+    # body_html = db.Column(db.Text)
+    is_submit = db.Column(db.Boolean)
+
+    articleimages = db.relationship('ArticleImage', backref='article',
+                                    lazy='dynamic',
+                                    cascade='all, delete-orphan',
+                                    passive_deletes=True)
+
+    def admin_to_json(self):
+        json_article = {
+            'id': self.id,
+            'title': self.title,
+            'timestamp': self.timestamp,
+            "type_id": self.article_type.id,
+            "type_name": self.article_type.name,
+            'url': url_for('main.blog', id=self.id, _external=True),
+        }
+        return json_article
 
     def to_json(self):
         json_article = {
@@ -137,30 +156,31 @@ class Article(db.Model):
             'body_html': self.body_html,
             'timestamp': self.timestamp,
             "article_type_id": self.article_type_id,
-            "article_type": ArticleType.query.filter(ArticleType.id == self.article_type_id).first().name,
+            "article_type": self.article_type.name,
             'blog_imgaes': self.blog_images
         }
-        return json_article
 
-    @staticmethod
-    def on_changed_body(target, value, oldvalue, initiaor):
-        allow_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                      'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'br',
-                      'table', 'tr', 'td']
-        # 转换markdown为html，并清洗html标签
-        target.body_html = bleach.linkify(bleach.clean(
-            markdown(value,
-                     extensions=['markdown.extensions.toc',
-                                 'markdown.extensions.tables'],
-                     output_form='html'),
-            tags=allow_tags, strip=True,
-            attributes={
-                '*': ['class'],
-                'a': ['href', 'rel'],
-                'img': ['src', 'alt'],  # 支持<img src …>标签和属性
-            }
-        ))
+        #     return json_article
+
+        # @staticmethod
+        # def on_changed_body(target, value, oldvalue, initiaor):
+        #     allow_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+        #                   'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+        #                   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'br',
+        #                   'table', 'tr', 'td']
+        #     # 转换markdown为html，并清洗html标签
+        #     target.body_html = bleach.linkify(bleach.clean(
+        #         markdown(value,
+        #                  extensions=['markdown.extensions.toc',
+        #                              'markdown.extensions.tables'],
+        #                  output_form='html'),
+        #         tags=allow_tags, strip=True,
+        #         attributes={
+        #             '*': ['class'],
+        #             'a': ['href', 'rel'],
+        #             'img': ['src', 'alt'],  # 支持<img src …>标签和属性
+        #         }
+        #     ))
 
     def __repr__(self):
         return '<Article %s>' % self.title
@@ -187,7 +207,15 @@ class Article(db.Model):
     '''
 
 
-db.event.listen(Article.body, 'set', Article.on_changed_body)
+# db.event.listen(Article.body, 'set', Article.on_changed_body)
+
+
+class ArticleImage(db.Model):
+    __tablename__ = 'articleimages'
+    id = db.Column(db.Integer, primary_key=True)
+    imagename = db.Column(db.String(128))
+    article_id = db.Column(db.Integer, db.ForeignKey(
+        'articles.id', ondelete='CASCADE'))
 
 
 class ArticleType(db.Model):

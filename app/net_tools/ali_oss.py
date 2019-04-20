@@ -24,6 +24,14 @@ callback_url = temp["callback_url"]
 expire_time = temp['expire_time']
 
 
+def get_bucket():
+    auth = oss2.Auth(access_key_id, access_key_secret)
+    bucket = oss2.Bucket(
+        auth, 'http://oss-cn-shanghai.aliyuncs.com',
+        'xiangcaihua-blog')
+    return bucket
+
+
 def get_host():
     return host
 

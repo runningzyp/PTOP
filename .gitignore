@@ -16,3 +16,4 @@ venv
 /.idea
 migrations/
 ali_config.json
+config.json

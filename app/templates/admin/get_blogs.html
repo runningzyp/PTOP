@@ -1,0 +1,66 @@
+{% extends "admin/base_admin.html" %}
+{% block title%} 文章管理 {% endblock %}
+{% block styles %}
+{{super()}}
+<style>
+        /* 防止下拉框的下拉列表被隐藏---必须设置--- */
+        .layui-table-cell { overflow: visible !important; }
+       /* 使得下拉框与单元格刚好合适 */
+       td .layui-form-select{
+       margin-top: -10px;
+       margin-left: -15px;
+       margin-right: -15px;
+       }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div style="padding: 15px;">
+
+    <table id="demo" lay-filter="test"></table>
+
+</div>
+
+{% endblock content %}
+          
+ 
+    
+{% block scripts %}
+{{super()}}
+   <!-- 模板引擎 -->
+   <script src="/static/js/adminjs/admin.js"></script>
+
+   {% raw %}
+   
+   <script type="text/html" id="barDemo">
+       <a class="layui-btn layui-btn-sm layui-btn-primary" href = "{{ d.url }}",lay-event="detail">查看</a>
+       <a class="layui-btn layui-btn-sm " lay-event="edit">编辑</a>
+       <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+   </script>
+     
+     <script type="text/html" id="zizeng">
+       {{d.LAY_TABLE_INDEX+1}}
+    </script>
+
+   <script type="text/html" id="type" >    
+       <select name='type' lay-verify='' lay-search=''>
+           <option value="1">{{}}</option>
+           <option value="母子">母子</option>
+       </select>
+   </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#l2").addClass("layui-nav-itemed")
+            $("#d1").addClass("layui-this");
+        });
+       
+    </script>
+
+   {% endraw %}
+
+{% endblock %}
+ 
+
