@@ -5,6 +5,9 @@
 {% block title %} 写文章 {% endblock %}
 {% block styles %}
 {{super()}}
+<link rel="stylesheet" href="/static/ckeditor5/build/ck.css">
+
+
 
 {% endblock %}
 
@@ -13,12 +16,12 @@
 {% endblock %}
 
 {% block content %}
-                <form class="layui-form layui-form-pane">
+
+
+                <form class="layui-form" action="" method="POST">
                     <!-- ck文章编辑器 -->
-                    <div id="toolbar-container"></div>
-                    <div name="body" style="height: 400px;" id="editor"></div>
-
-
+                    {{form.hidden_tag()}}
+                        <textarea name="body"  id="editor"></textarea>
                     <div class="layui-form-item">
                         <label class="layui-form-label">输入框</label>
                         <div class="layui-input-block">
@@ -39,20 +42,21 @@
 
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn layui-btn-fluid" lay-submit="" type="button" lay-filter="*">立即提交</button>
+                            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
                         </div>
                     </div>
                 </form>
 {% endblock %}
 
+
 {% block scripts %}
 {{super()}}
 
-  <script type="text/javascript" src="/static/ckeditor5/ckeditor.js"></script>
-  <script type="text/javascript" src="/static/ckeditor5/translations/zh-cn.js"></script>
-  <script type="text/javascript" src="/static/ckeditor5/my_ckeditor_config.js"></script>
+  <script type="text/javascript" src="/static/ckeditor5/build/ckeditor.js"></script>
+  <script type="text/javascript" src="/static/ckeditor5/build/translations/zh-cn.js"></script>  
+  <script type="text/javascript" src="/static/ckeditor5/my_ck_config.js"></script>
+  <scripttype="text/javascript" src="/static/js/jquery-1.11.1.js" > </script>
 
-     
 
 
 
@@ -60,9 +64,6 @@
 <script>
         var $DRAFT = "{{ draft }}";
         var $DRAFT_URL = "{{ draft_url}}";
-
-  
-       
 
         layui.use('form', function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
@@ -75,7 +76,6 @@
    
         
         });
-      
 
  
     </script>

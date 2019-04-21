@@ -19,6 +19,4 @@ class LoginForm(FlaskForm):
 
 class ArticleForm(FlaskForm):
     body = TextAreaField('今天心情怎么样', validators=[Required()])
-    article_type_id = SelectField(
-        choices='', coerce=int)
     title = StringField()

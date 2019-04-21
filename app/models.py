@@ -123,12 +123,12 @@ class Article(db.Model):
     __tablename__ = 'articles'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
-    body = db.Column(db.Text)
-    finish_time = db.Column(db.DateTime, index=True)
+    body_md = db.Column(db.Text)
+    finish_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     last_change_time = db.Column(
         db.DateTime, index=True, default=datetime.utcnow)
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
-    # body_html = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     is_submit = db.Column(db.Boolean)
 
     articleimages = db.relationship('ArticleImage', backref='article',

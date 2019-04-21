@@ -1,5 +1,6 @@
 import json
 import datetime
+import uuid
 
 from flask import render_template, request, flash
 from flask import redirect, url_for, session
@@ -46,7 +47,7 @@ def get_blogs():
         data = json.loads(request.get_data().decode('utf-8'))
         page = data['page']
         pagination = Article.query.filter_by(is_submit=True).order_by(
-            Article.timestamp.desc()).paginate(
+            Article.finish_time.desc()).paginate(
             page, per_page=10, error_out=False)
         articles = pagination.items
         return jsonify({'status': 200,
@@ -81,43 +82,32 @@ def delete_blog():
                 })
 
 
+@admin.route('/upload-blog-image', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def upload_blog_img():
+    if request.method == "POST":
 
+        bucket = ali_oss.get_bucket()  # 从工具模块获取 bucket访问授权
+        dt = datetime.datetime.utcnow()
+        sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
 
+        # requests.get返回的是一个可迭代对象（Iterable）
+        # 此时Python SDK会通过Chunked Encoding方式上传。
+        img = request.files['upload']
 
-# @admin.route('/upload-blog-img', methods=['POST', 'GET'])
-# @login_required
-# @admin_required
-# def upload_blog_img():
-#     if request.method == "POST":
-
-#         bucket = ali_oss.get_bucket()
-#         dt = datetime.datetime.utcnow()
-#         sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
-
-#         # requests.get返回的是一个可迭代对象（Iterable），此时Python SDK会通过Chunked Encoding方式上传。
-
-#         article = Article.query.get(session['current_article'])
-#         index = article.id
-#         img = request.files['editormd-image-file']
-#         filename = img.filename
-#         sec_filename = "blogimages" + \
-#             str(index) + '/[' + sec_key + ']' + filename
-#         try:
-#             bucket.put_object(sec_filename, img)
-#         except Exception as e:
-#             print(e)
-#         else:
-#             image = ArticleImage(imagename=sec_filename)
-#             db.session.add(image)
-
-#             article.articleimages.append(image)
-#             img_address = "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/" + sec_filename
-#         back = {
-#             "success": 1,
-#             "message": "提示的信息",
-#             "url": img_address
-#         }
-#         return json.dumps(back)
+        img.filename = str(uuid.uuid1())+'.'+img.filename.split('.')[-1]
+        upload_folder = 'blogimages'+'/' +\
+            datetime.datetime.now().strftime('%Y-%m-%d')+'/'  # 日期表示文件夹
+        full_path = upload_folder + img.filename  # 完整路径
+        try:
+            bucket.put_object(upload_folder+img.filename, img)
+        except Exception as e:
+            print(e)
+        else:
+            return jsonify({"uploaded": "true",
+                            "url": "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/"+full_path})
+        return jsonify({"uploaded": "false", "message": "wrong"})
 
 
 # @admin.route('/post-blog', methods=['POST'])
@@ -157,71 +147,30 @@ def delete_blog():
 @admin.route('/write-blog', methods=['POST', 'GET'])
 @admin_required
 def write_blog():
-    if request.method == "POST":
-        data = json.loads(request.get_data().decode('utf8'))
-        article = Article.query.get(data['id'])
-        if article is not None:
-            db.session.delete(article)
-        newarticle = Article(is_submit=False)
-        session['current_article'] = newarticle.id  # 会话中session加入本篇文章ID
-        print(">>>>>>>>>>>>>"+session['current_article'])
-        db.session.add(newarticle)
-        return jsonify({"status": "200", "message": "success"})
-
+    form = ArticleForm()
     types = ArticleType.query.all()
-    draft = Article.query.filter_by(is_submit=False).first()
-    pre_article = Article(is_submit=False)
-    session['current_article'] = pre_article.id
-    db.session.add(pre_article)
-    print(session['current_article'])
-    if draft is not None:
-        draft_url = request.url_root+"admin/update-blog/"+str(draft.id)
-        return render_template('admin/write_blog.html',
-                               types=types, draft=draft.id, draft_url=draft_url)
-    else:
-        return render_template('admin/write_blog.html',
-                               types=types)
+    if request.method == "POST":
+        title = request.form.get('title')
+        body_html = request.form.get('body')
+        aritcle_type_id = request.form.get('type')
+        article = Article(title=title, body_html=body_html,
+                          article_type_id=aritcle_type_id)
+        db.session.add(article)
+        db.session.commit()
+        print(article.finish_time)
+        return redirect(url_for('main.blog', id=article.id))
+    return render_template('admin/write_blog.html', form=form, types=types)
 
 
-# @admin.route('/update-blog/<int:id>', methods=['POST', 'GET'])
-# @admin_required
-# def update_blog(id):
-#     article = Article.query.get_or_404(id)
-#     article.is_submit = False
-#     session['current_article'] = article.id
-#     print(session['current_article'])
-#     db.session.commit()
-#     types = ArticleType.query.all()
+@admin.route('/test', methods=['POST', 'GET'])
+def test():
+    if request.method == 'POST':
+        data = request.get_data()
 
-#     return render_template('admin/update_blog.html',
-#                            types=types, article=article)
+        print('hello')
 
 
 @admin.route('/', methods=['POST', 'GET'])
 @admin_required
 def admin():
     return render_template('admin/main.html')
-    # global BLOG_IMAGE
-
-    # form = ArticleForm()
-    # form.article_type_id.choices = [(v.id, v.name)
-    #                                 for v in ArticleType.query.all()]
-    # if form.validate_on_submit():
-    #     article = Article(
-    #         body=form.body.data,
-    #         title=form.title.data,
-    #         blog_images=BLOG_IMAGE,
-    #         # timestamp=datetime.utcnow(),
-    #         article_type_id=int(form.article_type_id.data))
-    #     db.session.add(article)
-    #     return redirect(url_for('main.blogs'))
-    # print(BLOG_IMAGE)
-    # BLOG_IMAGE = ''
-    # article_pagination = Article.query.paginate(
-    #     1, per_page=10, error_out=False)
-    # user_pagination = User.query.paginate(
-    #     1, per_page=10, error_out=False)
-    # article_pages = [x+1 for x in range(article_pagination.pages)]
-    # user_pages = [x+1 for x in range(user_pagination.pages)]
-    # return render_template('admin/admin.html', form=form,
-    #                        article_pages=article_pages, user_pages=user_pages)
