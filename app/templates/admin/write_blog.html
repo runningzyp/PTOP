@@ -5,7 +5,7 @@
 {% block title %} 写文章 {% endblock %}
 {% block styles %}
 {{super()}}
-    <link rel="stylesheet" href="/static/css/editormd.min.css">
+
 {% endblock %}
 
 {% block navbar %}
@@ -14,10 +14,11 @@
 
 {% block content %}
                 <form class="layui-form layui-form-pane">
+                    <!-- ck文章编辑器 -->
+                    <div id="toolbar-container"></div>
+                    <div name="body" style="height: 400px;" id="editor"></div>
 
-                    <div id="blog-editormd">
-                        <textarea  name="body" autocomplete="off" placeholder="请输入标题" class="layui-input"></textarea>
-                    </div>
+
                     <div class="layui-form-item">
                         <label class="layui-form-label">输入框</label>
                         <div class="layui-input-block">
@@ -46,72 +47,22 @@
 
 {% block scripts %}
 {{super()}}
-    <script src="/static/js/editormd.js"></script>
-    <script src="/static/editormd/plugins/emoji-dialog/emoji-dialog.js"></script>
-    <script src="/static/editormd/plugins/code-block-dialog/code-block-dialog.js"></script>
-    <script src="/static/editormd/plugins/image-dialog/image-dialog.js"></script>
-    <script>
 
+  <script type="text/javascript" src="/static/ckeditor5/ckeditor.js"></script>
+  <script type="text/javascript" src="/static/ckeditor5/translations/zh-cn.js"></script>
+  <script type="text/javascript" src="/static/ckeditor5/my_ckeditor_config.js"></script>
+
+     
+
+
+
+
+<script>
         var $DRAFT = "{{ draft }}";
         var $DRAFT_URL = "{{ draft_url}}";
-        var BlogEditor;
-        $(function () {
-            BlogEditor = editormd("blog-editormd", {
-                width: $(".jumbotron").width,
-                height: $(".jumbotron").height,
-                syncScrolling: "single",
-                emoji: true,
-                placeholder : "Enjoy Markdown! coding now...",
-                saveHTMLToTextarea : true,
-                path: $SCRIPT_ROOT+"static/editormd/lib/",
-                //启动本地图片上传功能
-                imageUpload: true,
-                imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-                imageUploadURL : $SCRIPT_ROOT+"admin/upload-blog-img",
-                onload: function () {
-                //console.log('onload', this);
-                //this.fullscreen();
-                //this.unwatch();
-                //this.watch().fullscreen();
-                //this.width("100%");
-                //this.height(480);
-                //this.resize("100%", 640);
-                },
-            });
-        });
-        layui.use('layer', function(){
-            var layer = layui.layer;
-            if ($DRAFT){
-                layer.open({
-                    type:1,
-                    area: ['600px', '200px'],
-                    offset: 't',// 顶部
-                    btn: ['编辑', '删除'],
-                    yes:function(){
-                        window.location.href=$DRAFT_URL
-                    },
-                    btn2:function(){
-                        $.ajax({
-                            type: "POST",
-                            url: $SCRIPT_ROOT+'admin/write-blog',
-                            data: JSON.stringify({
-                                "id":$DRAFT
-                            }),
-                            success: function (response) {
-                                if (response.status='200'){
-                                    layer.msg("删除成功")
-                                }else{
-                                    layer.msg("删除失败")
-                                }
-                            }
-                        });
-                    },
-                    shadeClose: true, //点击遮罩关闭
-                    content: '\<\div style="padding:20px;">检测到有一个未完成文章,是否继续编辑?\<\/div>'
-                })
-            }
 
-        });
+  
+       
 
         layui.use('form', function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
@@ -121,25 +72,7 @@
         //但是，如果你的HTML是动态生成的，自动渲染就会失效
         //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
         form.render()
-        form.on('submit(*)', function(data){
-            // console.log(data);
-            $.ajax({
-                type: "POST",
-                url: $SCRIPT_ROOT+'admin/post-blog',
-                data: JSON.stringify({
-                    'title':data.field.title,
-                    'body':data.field.body,
-                    'type':data.field.type,
-                }),
-                dataType: "json",
-                contentType:"application/json",
-                success: function (response) {
-                    if (response.status =="200"){
-                        window.location.href=response.url
-                    }
-                }
-            });
-        });
+   
         
         });
       

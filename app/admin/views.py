@@ -81,89 +81,75 @@ def delete_blog():
                 })
 
 
-# 获取用户列表
-@admin.route('/get-user', methods=['GET', 'POST'])
-@admin_required
-def get_user():
-    if request.method == "POST":
-        data = json.loads(request.get_data().decode('utf-8'))
-        page = int(data['page'])
-        pagination = User.query.paginate(
-            page, per_page=10, error_out=False)
-        users = pagination.items
-        return jsonify({
-            'user': [user.to_json() for user in users],
-            'count': pagination.total,
-            'pages': pagination.pages
-        })
 
 
-@admin.route('/upload-blog-img', methods=['POST', 'GET'])
-@login_required
-@admin_required
-def upload_blog_img():
-    if request.method == "POST":
 
-        bucket = ali_oss.get_bucket()
-        dt = datetime.datetime.utcnow()
-        sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
+# @admin.route('/upload-blog-img', methods=['POST', 'GET'])
+# @login_required
+# @admin_required
+# def upload_blog_img():
+#     if request.method == "POST":
 
-        # requests.get返回的是一个可迭代对象（Iterable），此时Python SDK会通过Chunked Encoding方式上传。
+#         bucket = ali_oss.get_bucket()
+#         dt = datetime.datetime.utcnow()
+#         sec_key = dt.strftime("%Y-%m-%d-%H-%M-%S")
 
-        article = Article.query.get(session['current_article'])
-        index = article.id
-        img = request.files['editormd-image-file']
-        filename = img.filename
-        sec_filename = "blogimages" + \
-            str(index) + '/[' + sec_key + ']' + filename
-        try:
-            bucket.put_object(sec_filename, img)
-        except Exception as e:
-            print(e)
-        else:
-            image = ArticleImage(imagename=sec_filename)
-            db.session.add(image)
+#         # requests.get返回的是一个可迭代对象（Iterable），此时Python SDK会通过Chunked Encoding方式上传。
 
-            article.articleimages.append(image)
-            img_address = "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/" + sec_filename
-        back = {
-            "success": 1,
-            "message": "提示的信息",
-            "url": img_address
-        }
-        return json.dumps(back)
+#         article = Article.query.get(session['current_article'])
+#         index = article.id
+#         img = request.files['editormd-image-file']
+#         filename = img.filename
+#         sec_filename = "blogimages" + \
+#             str(index) + '/[' + sec_key + ']' + filename
+#         try:
+#             bucket.put_object(sec_filename, img)
+#         except Exception as e:
+#             print(e)
+#         else:
+#             image = ArticleImage(imagename=sec_filename)
+#             db.session.add(image)
+
+#             article.articleimages.append(image)
+#             img_address = "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/" + sec_filename
+#         back = {
+#             "success": 1,
+#             "message": "提示的信息",
+#             "url": img_address
+#         }
+#         return json.dumps(back)
 
 
-@admin.route('/post-blog', methods=['POST'])
-@admin_required
-def post_blog():
-    data = json.loads(request.get_data().decode('utf-8'))
-    print(session['current_article'])
-    try:
-        print(session['current_article'])
-        artilce = Article.query.get(
-            session['current_article'])  # 从seeion获取当前编辑文章ID
-        artilce.title = data['title']
-        artilce.body = data['body']
-        article.article_type_id = data('type')
-        article.last_change_time = datetime.datetime.utcnow()
-        if artilce.finish is None:
-            artilce.finish = datetime.datetime.utcnow()
-        article.is_submit = True
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        return jsonify({
-            'status': '400',
-            'message': 'failed'
-        })
-    else:
-        url = request.url_root+"admin"
-        return jsonify({
-            'status': '200',
-            'message': 'success',
-            'url': url
-        })
+# @admin.route('/post-blog', methods=['POST'])
+# @admin_required
+# def post_blog():
+#     data = json.loads(request.get_data().decode('utf-8'))
+#     print(session['current_article'])
+#     try:
+#         print(session['current_article'])
+#         artilce = Article.query.get(
+#             session['current_article'])  # 从seeion获取当前编辑文章ID
+#         artilce.title = data['title']
+#         artilce.body = data['body']
+#         article.article_type_id = data('type')
+#         article.last_change_time = datetime.datetime.utcnow()
+#         if artilce.finish is None:
+#             artilce.finish = datetime.datetime.utcnow()
+#         article.is_submit = True
+#         db.session.commit()
+#     except Exception as e:
+#         print(e)
+#         return jsonify({
+#             'status': '400',
+#             'message': 'failed'
+#         })
+#     else:
+#         url = request.url_root+"admin"
+#         return jsonify({
+#             'status': '200',
+#             'message': 'success',
+#             'url': url
+#         })
 
 # 初始化草稿
 
@@ -197,18 +183,18 @@ def write_blog():
                                types=types)
 
 
-@admin.route('/update-blog/<int:id>', methods=['POST', 'GET'])
-@admin_required
-def update_blog(id):
-    article = Article.query.get_or_404(id)
-    article.is_submit = False
-    session['current_article'] = article.id
-    print(session['current_article'])
-    db.session.commit()
-    types = ArticleType.query.all()
+# @admin.route('/update-blog/<int:id>', methods=['POST', 'GET'])
+# @admin_required
+# def update_blog(id):
+#     article = Article.query.get_or_404(id)
+#     article.is_submit = False
+#     session['current_article'] = article.id
+#     print(session['current_article'])
+#     db.session.commit()
+#     types = ArticleType.query.all()
 
-    return render_template('admin/update_blog.html',
-                           types=types, article=article)
+#     return render_template('admin/update_blog.html',
+#                            types=types, article=article)
 
 
 @admin.route('/', methods=['POST', 'GET'])
