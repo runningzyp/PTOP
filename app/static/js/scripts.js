@@ -45,42 +45,7 @@ jQuery(document).ready(function() {
 			}
 		});
 
-		/* $('input').change(function(){
-				var f=$('#form');
-				var str =f.one.value+f.two.value+f.three.value+
-								 f.four.value+f.five.value+f.six.value;   
-				if(str.length==6){
-					$('#ID').value = str;
-					  f.submit();
-					  alert('hello');
-				}
-		}); */
-
-		
-         
-
-
-	
-   
-    /*
-        Form validation
-    */
-    $('.registration-form input[type="text"], .registration-form textarea').on('focus', function() {
-    	$(this).removeClass('input-error');
-    });
-    
-    $('.registration-form').on('submit', function(e) {
-    	
-    	$(this).find('input[type="text"], textarea').each(function(){
-    		if( $(this).val() == "" ) {
-    			e.preventDefault();
-    			$(this).addClass('input-error');
-    		}
-    		else {
-    			$(this).removeClass('input-error');
-    		}
-    	});
-    });
+ 
     
     
 });

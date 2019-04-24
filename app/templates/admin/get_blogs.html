@@ -30,7 +30,7 @@
 {% block scripts %}
 {{super()}}
    <!-- 模板引擎 -->
-   <script src="/static/js/adminjs/admin.js"></script>
+   <script src="/static/js/admin/admin.js"></script>
 
    {% raw %}
    
@@ -44,12 +44,6 @@
        {{d.LAY_TABLE_INDEX+1}}
     </script>
 
-   <script type="text/html" id="type" >    
-       <select name='type' lay-verify='' lay-search=''>
-           <option value="1">{{}}</option>
-           <option value="母子">母子</option>
-       </select>
-   </script>
 
     <script>
         $(document).ready(function () {

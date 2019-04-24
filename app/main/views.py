@@ -1,40 +1,29 @@
-import os
-import json
 import datetime
+import json
+import os
 import time
 
-from flask import render_template, session, redirect, url_for, current_app
-from flask import request, flash
-from flask_login import login_user, logout_user, login_required, login_manager
-from flask_login import current_user
-from .. import db
-from ..models import User, Data, Article, ArticleType
-from ..email import send_email
-from . import main
-from .. import auth
-from .forms import ArticleForm
 from flask import send_from_directory  # 文件下载
-from flask import jsonify
-
+from flask import (current_app, flash, jsonify, redirect, render_template,
+                   request, session, url_for)
+from flask_login import (current_user, login_manager, login_required,
+                         login_user, logout_user)
 from werkzeug import secure_filename  # 安全的文件名
 
+from . import main
+from .. import auth, db
 from ..decorators import admin_required
-
-
+from ..email import send_email
+from ..models import Article, ArticleType, Data, User
 from ..net_tools import ali_oss
-
-
+from .forms import ArticleForm
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         userkey = request.form.get('ID')
-        print('hello')
-        print(type(userkey))
-        print(userkey)
         user = User.query.filter_by(userkey=userkey).first()
-        print(user)
         if user is not None:
             login_user(user, True)  # true 记住用户
             return redirect(url_for('main.user', username=user.username))
@@ -45,47 +34,28 @@ def index():
 @main.route('/blogs', methods=['POST', 'GET'])
 def blogs():
     if request.method == "POST":
-        type_dic = {
-            'study': 1,
-            'essay': 2,
-            'funny': 3
-        }
         data = json.loads(request.get_data().decode('utf8'))
-        print(data)
-        page = data['page']
-        article_type = data['article_type']
-        print(article_type)
-        article_type_id = type_dic[article_type]
+        article = Article.query.filter_by(
+            article_type_id=data['type']).order_by(
+                Article.finish_time.desc()).paginate(data['page'],
+                                                     1, error_out=False)
+        try:
+            data = article.items[0].to_json()
+        except IndexError as e:
+            return jsonify({'status': '400', 'data': str(e)})
+        except Exception as e:
+            return jsonify({'status': '400', 'data': str(e)})
+        else:
+            return jsonify({
+                'status': '200',
+                'data': article.items[0].to_json()
+            })
 
-        pagination = Article.query.filter_by(article_type_id=article_type_id).paginate(
-            page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
-            error_out=False)
-        articles = pagination.items
-        article = articles[0]
+    articletypes = ArticleType.query.order_by(ArticleType.id.asc()).all()
+    print(articletypes)
+    counts = [articletype.articles.count() for articletype in articletypes]
 
-        prev = None
-        if pagination.has_prev:
-            prev = url_for('main.blogs', page=page-1, _external=True)
-        next = None
-        if pagination.has_next:
-            next = url_for('main.blogs', page=page+1, _external=True)
-        return jsonify({
-            'article': article.to_json(),
-            'prev': prev,
-            'next': next,
-            'count': pagination.total
-        })
-    page = 1  # 默认第一页
-    articles = []
-    counts = []
-    for i in range(3):
-        pagination = Article.query.filter_by(article_type_id=i+1).paginate(
-            page, per_page=current_app.config['FLASKY_ARTICLE_PER_PAGE'],
-            error_out=False)
-        articles.append(pagination.items)
-        print(pagination.items)
-        counts.append(pagination.total)
-    return render_template('blogs.html', articles=articles, counts=counts)
+    return render_template("blogs.html", counts=counts)
 
 
 @main.route('/blog/<int:id>')
@@ -132,14 +102,14 @@ def call_back():
         user = User.query.filter_by(email=email).first()
         bucket = request.form.get('bucket')
         filetype = request.form.get('mimeType')  # 文件类型
-        
+
         dt = datetime.datetime.utcnow()
-        
+
         data = Data(filename=filename, sec_filename=sec_filename,
                     filetype=filetype,
                     author=user)
         db.session.add(data)
-        
+
         url = host+'/' + sec_filename
         return json.dumps({'filename': filename, 'url': url})
     return 'success'

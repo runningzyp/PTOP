@@ -1,17 +1,15 @@
 
-import bleach
 from datetime import datetime
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+# from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request, url_for
-from markdown import markdown
 
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 from flask_sqlalchemy import event
-#from .decorators import admin_required
+# from .decorators import admin_required
 
 
 class Permission:
@@ -123,12 +121,12 @@ class Article(db.Model):
     __tablename__ = 'articles'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
-    body_md = db.Column(db.Text)
     finish_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     last_change_time = db.Column(
         db.DateTime, index=True, default=datetime.utcnow)
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
     body_html = db.Column(db.Text)
+    body_origin = db.Column(db.Text)    
     is_submit = db.Column(db.Boolean)
 
     articleimages = db.relationship('ArticleImage', backref='article',
@@ -140,7 +138,8 @@ class Article(db.Model):
         json_article = {
             'id': self.id,
             'title': self.title,
-            'timestamp': self.timestamp,
+            'finish_time': self.finish_time,
+            'last_change_time': self.last_change_time,
             "type_id": self.article_type.id,
             "type_name": self.article_type.name,
             'url': url_for('main.blog', id=self.id, _external=True),
@@ -152,35 +151,14 @@ class Article(db.Model):
             'id': self.id,
             'url': url_for('main.blog', id=self.id, _external=True),
             'title': self.title,
-            'body': self.body,
             'body_html': self.body_html,
-            'timestamp': self.timestamp,
+            'body_origin':self.body_origin,
+            'finish_time': self.finish_time,
+            'last_change_time': self.last_change_time,
             "article_type_id": self.article_type_id,
             "article_type": self.article_type.name,
-            'blog_imgaes': self.blog_images
         }
-
-        #     return json_article
-
-        # @staticmethod
-        # def on_changed_body(target, value, oldvalue, initiaor):
-        #     allow_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-        #                   'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-        #                   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'br',
-        #                   'table', 'tr', 'td']
-        #     # 转换markdown为html，并清洗html标签
-        #     target.body_html = bleach.linkify(bleach.clean(
-        #         markdown(value,
-        #                  extensions=['markdown.extensions.toc',
-        #                              'markdown.extensions.tables'],
-        #                  output_form='html'),
-        #         tags=allow_tags, strip=True,
-        #         attributes={
-        #             '*': ['class'],
-        #             'a': ['href', 'rel'],
-        #             'img': ['src', 'alt'],  # 支持<img src …>标签和属性
-        #         }
-        #     ))
+        return json_article
 
     def __repr__(self):
         return '<Article %s>' % self.title

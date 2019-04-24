@@ -1,26 +1,67 @@
-{%block head %}
+<!DOCTYPE html>
+<html>
+<head>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>香菜花</title>	
 <meta name="description" content="" />
 <meta name="keywords" content="" />
-<link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
-<link rel="icon" href="../static/ico/my.ico" type="image/x-icon">
-<link rel="stylesheet" type="text/css" href="../static/css/blogcss/default.css" />
-<link rel="stylesheet" type="text/css" href="../static/css/blogcss/component.css" />
-<script src="../static/js/modernizr.custom.js"></script>
+<link rel="shortcut icon" href="/static/my.ico" type="image/x-icon">
+<link rel="icon" href="/static/ico/my.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="/static/css/blogcss/default.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/blogcss/component.css" />
+<link rel="stylesheet" href="static/layui/css/layui.1.css">
+<!-- <script src="/static/js/modernizr.custom.js"></script> -->
 
-{% endblock %}
+<style>
 
-{% block page_content %}
+    .layui-laypage-prev, .layui-laypage-next{
+        float: left;
+        left: 135px;
+        bottom: 36.5px;
+        height: 20px;
+        position: relative;
+        margin: initial;
+        line-height:normal  ;
+        background-color: #FC756F;
+        border: none;
+        color: #fff;
+        display: inline-block;
+        padding: 3px 15px;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        cursor: pointer;
+        margin-right: 4px;
+        box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+        visibility:visible;
+    }
+   
+  .layui-disabled {
+    color: #d2d2d2 ;
+    cursor: not-allowed ;
+}
+
+
+ 
+
+</style>
+</head>
+
+
+
+
+<body>
+    
+
 <div class="container">
 	<header class="clearfix">
 		<h1>香菜的小书桌</h1>
 		<nav class="codrops-demos">
 			<!-- <a class="current-demo" href="">文本模式</a> -->
 			<a href="{{url_for('main.about')}}">关于我</a>
-			<a id = 'change' href="#">更换壁纸</a>
+			<a id = 'change-back' href="#">更换壁纸</a>
 		</nav>
 		<span class="support-note">欢迎来到香菜的博客</span>
 	</header>
@@ -48,22 +89,20 @@
 										<span class="middle"></span>	
 										<span class="lang"></span>
 										<span class="lang"></span>
-									</div>
+								</div>
 						</div>
 					</div>
 					<div class="bk-page">
 
-						<div class="bk-content" id = 'funny'>
-								{% if articles[2] %}
+						<div class="bk-content" id = 'book3'>
+
 							<div  class="title">
-								<a href="{{url_for('main.blog',id=articles[2][0].id)}}">
-								<p>{{articles[2][0].title}}</p>
-								</a>
+							
 								</div>
 							<div class="content">
-								{{articles[2][0].body_html|safe}}
+
 							</div>	
-								{% endif %}		
+
 						</div>
 					
 
@@ -84,7 +123,11 @@
 				</div>
 				<div class="bk-info">
 					<button class="bk-bookback">翻转</button>
-					<button class="bk-bookview">查看内容</button>
+                    <button class="bk-bookview" id = "book-3-button">查看</button>
+                    <div id="page3" ></div>
+           
+
+
 					<h3>
 						<span></span>
 						<span>闲情记趣</span>
@@ -120,19 +163,15 @@
 						</div>
 					</div>
 					<div class="bk-page">
-							<div class="bk-content" id = 'study'>
-									{% if articles[0] %}
+							<div class="bk-content" id = 'book1'>
 									<div  class="title">
-										<a href="{{url_for('main.blog',id=articles[0][0].id)}}">
-										{{articles[0][0].title}}
-										</a>
+
 									</div>	
 									<div  class="content">
-                                        {{articles[0][0].body_html|safe}}
+
                                     </div>	
-									{% endif %}		
+
 								</div>
-				
 				
 					</div>
 					<div class="bk-back">
@@ -152,7 +191,9 @@
 				</div>
 				<div class="bk-info">
 					<button class="bk-bookback">翻转</button>
-					<button class="bk-bookview">查看内容</button>
+                    <button class="bk-bookview">查看</button>
+                    <div id="page1" ></div>
+                    
 					<h3>
 						<span></span>
 						<span>学习笔记</span>
@@ -188,18 +229,16 @@
 						</div>
 						<div class="bk-page">
 							
-								<div class="bk-content" id = 'essay'>
-										{% if articles[1] %}
+								<div class="bk-content" id = 'book2'>
+
 										<div  class="title">
-											<a href="{{url_for('main.blog',id=articles[1][0].id)}}">
-											<p>{{articles[1][0].title}}</p>
-											</a>
+
 										</div>	
 											
 										<div  class="content">
-                                            {{articles[1][0].body_html|safe}}
+
                                         </div>
-										{% endif %}			
+
 									</div>
 						</div>
 						<div class="bk-back">
@@ -220,7 +259,9 @@
 					</div>
 					<div class="bk-info">
 						<button class="bk-bookback">翻转</button>
-						<button class="bk-bookview">查看内容</button>
+                        <button class="bk-bookview">查看</button>
+                        <div id="page2" ></div>
+                        
 						<h3>
 							<span></span>
 							<span>心情随笔</span>
@@ -235,32 +276,151 @@
 		</ul>
 	</div>
 </div><!-- /container -->
-{% endblock %}
 
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/static/js/jquery-1.11.1.js"></script>
+<script src="/static/js/books1.js"></script>
+<script src="/static/layui/layui.js"></script>
 <script>
-		
-		counts = {{counts}};
 
-		var gl_total_page = {
-		'study': counts[0],
-		'essay': counts[1],
-		'funny': counts[2]
-		};
-		gl_current_page ={
-			'study':1,
-			'essay':1,
-			'funny':1			
-		}
-		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-</script>
-<script src="../static/js/books1.js"></script>
-<script src="../static/js/book_ext.js"></script>
-<script>
-	
+    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+     counts = {{counts}}
+
+     $(document).ready(function () {
+        var i = 1;
+        $("#change-back").click(function () {
+
+                if (i < 10) {
+                    $("body").css({
+                        "background-image": "url('/static/blog_back/" + i + ".png')"
+                    });
+                    i++;
+                } else {
+                    i = 1;
+                }
+            });
+            
+        })
+
 	$(function () {
-		Books.init();
+        Books.init();
+        
 
-	});
+    }); 
 
+   
+       
+
+        layui.use('layer',function(){
+            var layer = layer;
+
+        })
+
+        layui.use('laypage', function(){
+        var laypage = layui.laypage;
+
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'page3',
+            count: counts[2],
+            limit:1,
+            layout: ['prev', 'next'],
+            jump: function(obj, first){
+                $.ajax({
+                    method: "POST",
+                    url: $SCRIPT_ROOT+"blogs",
+                    data: JSON.stringify({
+                        "page":obj.curr,
+                        "type":3
+                    }),
+                    async:true,
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status =='200'){
+                        $("#book3 .title").html("<a href='"+res['data'].url+"'>"+res['data'].title+"</a>")
+                        }
+                    }
+                });
+            if(!first){
+                     layer.msg('第 '+ obj.curr +' 页');
+                    }
+                }   
+                    
+            });
+
+            
+            //执行第二个一个laypage实例
+            laypage.render({
+                elem: 'page2',
+                count: counts[1],
+                limit:1,
+                layout: ['prev', 'next'],
+                jump: function(obj, first){
+                    $.ajax({
+                        method: "POST",
+                        url: $SCRIPT_ROOT+"blogs",
+                        data: JSON.stringify({
+                            "page":obj.curr,
+                            "type":2
+                        }),
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.status =='200')
+                            $("#book2 .title").html("<a href='"+res['data'].url+"'>"+res['data'].title+"</a>")
+
+                        }
+                    });
+
+                if(!first){
+                        layer.msg('第 '+ obj.curr +' 页');
+                        }
+                    }       
+                });
+
+                 //执行第三个laypage实例
+                laypage.render({
+                    elem: 'page1',
+                    count: counts[0],
+                    limit:1,
+                    layout: ['prev', 'next'],
+                    jump: function(obj, first){
+                        $.ajax({
+                            method: "POST",
+                            url: $SCRIPT_ROOT+"blogs",
+                            data: JSON.stringify({
+                                "page":obj.curr,
+                                "type":1
+                            }),
+                            dataType: "json",
+                            success: function (res) {
+                                if (res.status =='200')
+                                $("#book1 .title").html("<a href='"+res['data'].url+"'>"+res['data'].title+"</a>")
+
+                            }
+                        });
+                    
+
+                    if(!first){
+                            layer.msg('第 '+ obj.curr +' 页');
+                            }
+                        }       
+                    });
+
+                });//page
+                layui.use('element', function(){
+                        var element = layui.element;
+                        element.init();
+                        $(".bk-bookview").next().find('a').css('visibility','hidden')
+                        $(".bk-bookview").click(function(){
+                            var vib = $(this).next().find('a')
+                            if (vib.css('visibility') =='hidden'){
+                                vib.css('visibility','visible')
+                            }else{
+                                vib.css('visibility','hidden')
+                            }
+                        })
+                    });
+          
+       
 </script>
+</body>
+</html>

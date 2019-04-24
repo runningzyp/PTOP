@@ -1,82 +1,212 @@
-
 {% extends "admin/base_admin.html" %}
 
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %} 写文章 {% endblock %}
+{% block metas %}
+{{super()}}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+{% endblock %}
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="/static/ckeditor5/build/ck.css">
 
-
-
 {% endblock %}
 
 {% block navbar %}
-    {{super()}}
+{{super()}}
 {% endblock %}
 
 {% block content %}
 
+<div class="layui-row ">
+    <div class="layui-col-md3">
+        <div style="padding: 5px ">
 
-                <form class="layui-form" action="" method="POST">
-                    <!-- ck文章编辑器 -->
-                    {{form.hidden_tag()}}
-                        <textarea name="body"  id="editor"></textarea>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">输入框</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
-                        </div>
+            <!-- form -->
+            <div class="layui-form layui-form-pane" action="#" method="POST">
+                {{form.hidden_tag()}}
+                <input style="display: none" name = "id" id = "article_id" value="{%if article %}{{article.id}} {% endif %}">
+                <div class="layui-form-item layui-row">
+                    <input class="layui-col-xs12 layui-input" id="title" name="title" value="{%if article %}{{article.title}} {% endif %}" required placeholder="请输入标题"
+                        style="border-style: none;border-bottom: 1px solid;">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">下拉选择框</label>
+                    <div class="layui-input-block">
+                        <select name="type" id="type" lay-filter="aihao">
+                            {% for type in types %}
+                            <option value="{{type.id}}">{{type.name}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
+                </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">下拉选择框</label>
-                        <div class="layui-input-block">
-                            <select name="type" lay-filter="aihao">
-                                {% for type in types %}
-                                <option value="{{type.id}}">{{type.name}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+                <button class="layui-btn layui-btn-fluid" id="submit"> 立即提交</button>
+            </div>
+            <!-- formend -->
+            <!-- 上传 -->
+            <div >
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>拖拽上传</legend>
+                    </fieldset>
 
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                        </div>
+                    <div class="layui-upload-drag" id="upload">
+                        <i class="layui-icon"></i>
+                        <p>点击上传，或将文件拖拽到此处</p>
                     </div>
-                </form>
+            </div>
+             <!-- 上传结束 -->
+        </div>
+    </div>
+    <div class="layui-col-md9">
+
+        <!-- ck文章编辑器 -->
+        <textarea name="body" id="editor"></textarea>
+
+    </div>
+
+</div>
+<div class="replace" style="display:none">
+    {% if article %}
+    {{article.body_html|safe}}
+    {% endif %}
+</div>
 {% endblock %}
 
 
 {% block scripts %}
 {{super()}}
 
-  <script type="text/javascript" src="/static/ckeditor5/build/ckeditor.js"></script>
-  <script type="text/javascript" src="/static/ckeditor5/build/translations/zh-cn.js"></script>  
-  <script type="text/javascript" src="/static/ckeditor5/my_ck_config.js"></script>
-  <scripttype="text/javascript" src="/static/js/jquery-1.11.1.js" > </script>
+<script>
+
+    layui.use('layer', function(){
+        var layer = layui.layer;
+    });
+
+    layui.use('upload', function(){
+        var upload = layui.upload;
+    });
+
+</script>
+<script type="text/javascript" src="/static/ckeditor5/build/ckeditor.js"></script>
+<script type="text/javascript" src="/static/ckeditor5/build/translations/zh-cn.js"></script>
+<script type="text/javascript" src="/static/ckeditor5/my_ck_config.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.11.1.js"> </script>
+
+<script type="text/javascript" src="/static/js/admin/upload-data.js"> </script>
+
+
 
 
 
 
 
 <script>
-        var $DRAFT = "{{ draft }}";
-        var $DRAFT_URL = "{{ draft_url}}";
+    /* 格式化字符串函数 */
+    function codeFormat(code, indent, tmpIndent) {
+        var indent = indent || '  ';
+        var tmpIndent = tmpIndent || '\n';
+        var preg = /<(\S*)([^>]*)>([\s\S]*?)<\/\1>/ig;
+        return code.replace(preg, function ($0, $1, $2, $3) {
+            return tmpIndent + '<' + $1 + $2 + '>' +
+                codeFormat($3, indent, tmpIndent + indent) +
+                ($3.trim().substr(0, 1) == '<' ? tmpIndent : '') +
+                '</' + $1 + '>';
+        });
+    }
 
-        layui.use('form', function(){
+    var $HAVE_ARTICLE ="{{have_article}}"//判断是否有文章
+    
+
+
+    layui.use('form', function () {
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        form.render() //渲染表单
+    });
 
-        //……
+    //加载动画
+    var ii = layer.load();
+    setTimeout(function () {
+        layer.close(ii);
+    }, 1000);
 
-        //但是，如果你的HTML是动态生成的，自动渲染就会失效
-        //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
-        form.render()
-   
-        
+    function addr(){
+        if($HAVE_ARTICLE =="True"){
+            return "admin/update-blog/"+$("#article_id").val()
+        }else{
+            return "admin/write-blog"
+        }
+    }
+
+    //提交文章函数
+    function post(){
+        editor.updateSourceElement()
+        $.ajax({
+            type: "POST",
+            url: $SCRIPT_ROOT + addr(),
+            data: JSON.stringify({
+                "title": $("#title").val(),
+                "type": $("#type").val(),
+                "body": codeFormat($(".ck-editor__main").html()), //美化后的代码
+                "body_origin": editor.getData()
+            }),
+            dataType: "json",
+            success: function (response) {
+                if (response.status = "200") {
+                    window.location.href = $SCRIPT_ROOT + "blog/" + response.id;
+                } else {
+                    alert('errot')
+                }
+
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        if($HAVE_ARTICLE == "True"){
+            var $REPLACE = $(".replace").html()
+            $(".ck-editor__main").html($REPLACE) //替换编辑器中
+        }
+
+        $("#submit").click(function () {
+            // alert($(".ck-editor__main").html())
+            // alert(codeFormat($(".ck-editor__main").html())) //测试格式化排版
+            if($HAVE_ARTICLE == "True"){
+                post()//调用提交文章函数
+                return 
+            }
+            if ($("#title").val() == '') {
+                layer.msg('请输入标题')
+                return
+            }
+            if (editor.getData() == '') {
+                layer.open({
+                    content: '输入内容为空,确定提交吗?',
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        post()
+                    },
+                    btn2: function (index, layero) {
+                    }
+                });
+                return
+            }else{
+                layer.open({
+                    content: '确定提交吗?',
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        post()
+                    },
+                    btn2: function (index, layero) {
+                    }
+                });
+            }
+          
+
         });
 
- 
-    </script>
+    });
+</script>
 {% endblock %}

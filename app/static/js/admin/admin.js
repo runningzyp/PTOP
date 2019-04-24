@@ -19,10 +19,6 @@ function createTime(v){
     return str;
 }
 
-layui.use('layer', function(){
-var layer = layui.layer;
-
-});
 
 
 layui.use('table', function(){
@@ -48,12 +44,16 @@ layui.use('table', function(){
             ,{field:'zizeng', width:80, title: '序号',type:'numbers'}
             ,{field: 'id', title: '文章序号', hide: true,width:80}
             ,{field: 'title', title: '标题',}
-            ,{field: 'timestamp', title: '时间', width:'20%',
+            ,{field: 'finish_time', title: '完成时间', width:'20%',
                     templet :function (row){
-                        return createTime(row.timestamp);
+                        return createTime(row.finish_time);
+                        }}
+            ,{field: 'last_change_time', title: '修改时间', width:'20%',
+                    templet :function (row){
+                            return createTime(row.last_change_time);
                         }}
             // ,{field: 'type_id', title: '类型号', width:80}
-            ,{field: 'type', title: '类型', width:140,templet:'#type'}
+            ,{field: 'type_name', title: '类型', width:140}
             ,{field:'right', title: '操作', width:177,toolbar: '#barDemo'}
             ]]
         ,request: {
@@ -61,7 +61,7 @@ layui.use('table', function(){
         ,limitName: 'limit' //每页数据量的参数名，默认：limit
         }
         ,response: {
-            statusName: 'code' //数据状态的字段名称，默认：code
+            statusName: 'status' //数据状态的字段名称，默认：code
             ,statusCode: 200 //成功的状态码，默认：0
             ,msgName: 'msg' //状态信息的字段名称，默认：msg
             ,countName: 'count' //数据总数的字段名称，默认：count
@@ -70,7 +70,7 @@ layui.use('table', function(){
 
         ,parseData: function(res){ //res 即为原始返回的数据
             return {
-            "code": res.status, //解析接口状态
+            "status": res.status, //解析接口状态
             "msg": res.message, //解析提示文本
             "count": res.count, //解析数据长度
             "data": res.data //解析数据列表

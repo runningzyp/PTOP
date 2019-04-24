@@ -43,10 +43,10 @@ def get_iso_8601(expire):
 
 
 def get_token(upload_dir):
-    now = int(time.time())
-    expire_syncpoint = now + expire_time
+    now = int(time.time())  # 返回当前时间的时间戳（1970纪元后经过的浮点秒数）。
+    expire_syncpoint = now + expire_time  # 设置过期时间
 
-    expire = get_iso_8601(expire_syncpoint)
+    expire = get_iso_8601(expire_syncpoint)  # 转化为gmt时间
 
     policy_dict = {}
     policy_dict['expiration'] = expire
@@ -61,6 +61,7 @@ def get_token(upload_dir):
     policy_encode = base64.b64encode(policy)
     h = hmac.new(access_key_secret, policy_encode, sha)
     sign_result = base64.encodebytes(h.digest()).strip().decode('utf-8')
+    
     callback_dict = {}
     callback_dict['callbackUrl'] = callback_url
     callback_dict['callbackBody'] = 'bucket=${bucket}&filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}'

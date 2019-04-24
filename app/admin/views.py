@@ -17,6 +17,12 @@ import oss2
 from ..net_tools import ali_oss
 
 
+@admin.route('/test/<int:id>', methods=['GET'])
+def test(id):
+    blog = Article.query.get(id).body_origin
+    return render_template('test.html', blog=blog)
+
+
 @admin.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     form = LoginForm()
@@ -46,9 +52,10 @@ def get_blogs():
         print('hello')
         data = json.loads(request.get_data().decode('utf-8'))
         page = data['page']
-        pagination = Article.query.filter_by(is_submit=True).order_by(
+        pagination = Article.query.order_by(
             Article.finish_time.desc()).paginate(
-            page, per_page=10, error_out=False)
+            page, per_page=data['limit'], error_out=False)
+
         articles = pagination.items
         return jsonify({'status': 200,
                         'message': 'success',
@@ -94,7 +101,8 @@ def upload_blog_img():
 
         # requests.get返回的是一个可迭代对象（Iterable）
         # 此时Python SDK会通过Chunked Encoding方式上传。
-        img = request.files['upload']
+
+        img = request.files['image']
 
         img.filename = str(uuid.uuid1())+'.'+img.filename.split('.')[-1]
         upload_folder = 'blogimages'+'/' +\
@@ -105,72 +113,88 @@ def upload_blog_img():
         except Exception as e:
             print(e)
         else:
-            return jsonify({"uploaded": "true",
-                            "url": "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/"+full_path})
-        return jsonify({"uploaded": "false", "message": "wrong"})
+            return jsonify({"status": "200",
+                            "url": "https://xiangcaihua-blog.oss-cn-shanghai.aliyuncs.com/"+full_path
+                            })
+        return jsonify({
+            "status": "400",
+            "message": "could not upload this image"
 
-
-# @admin.route('/post-blog', methods=['POST'])
-# @admin_required
-# def post_blog():
-#     data = json.loads(request.get_data().decode('utf-8'))
-#     print(session['current_article'])
-#     try:
-#         print(session['current_article'])
-#         artilce = Article.query.get(
-#             session['current_article'])  # 从seeion获取当前编辑文章ID
-#         artilce.title = data['title']
-#         artilce.body = data['body']
-#         article.article_type_id = data('type')
-#         article.last_change_time = datetime.datetime.utcnow()
-#         if artilce.finish is None:
-#             artilce.finish = datetime.datetime.utcnow()
-#         article.is_submit = True
-#         db.session.commit()
-#     except Exception as e:
-#         print(e)
-#         return jsonify({
-#             'status': '400',
-#             'message': 'failed'
-#         })
-#     else:
-#         url = request.url_root+"admin"
-#         return jsonify({
-#             'status': '200',
-#             'message': 'success',
-#             'url': url
-#         })
-
-# 初始化草稿
+        })
 
 
 @admin.route('/write-blog', methods=['POST', 'GET'])
 @admin_required
 def write_blog():
-    form = ArticleForm()
-    types = ArticleType.query.all()
     if request.method == "POST":
-        title = request.form.get('title')
-        body_html = request.form.get('body')
-        aritcle_type_id = request.form.get('type')
-        article = Article(title=title, body_html=body_html,
+        data = json.loads(request.get_data().decode('utf8'))
+        title = data['title']
+        body_origin = data['body_origin']
+        body_html = data['body']
+
+        # 第一次清洗contenteditable标签
+        body_html = ''.join(body_html.split("contenteditable=\"true\""))
+        # 第二次清洗table标签
+        body_html = ''.join(body_html.split(
+            "class=\"ck-editor__editable ck-editor__nested-editable\""))
+
+        aritcle_type_id = data['type']
+        article = Article(title=title, body_html=body_html, body_origin=body_origin,
                           article_type_id=aritcle_type_id)
         db.session.add(article)
         db.session.commit()
-        print(article.finish_time)
-        return redirect(url_for('main.blog', id=article.id))
-    return render_template('admin/write_blog.html', form=form, types=types)
+        return jsonify({
+            'status': '200',
+            'id':  article.id
+        })
+    form = ArticleForm()
+    types = ArticleType.query.all()
+    return render_template('admin/write_blog.html', form=form,
+                           types=types, articlel=None, have_article=False)
 
 
-@admin.route('/test', methods=['POST', 'GET'])
-def test():
-    if request.method == 'POST':
-        data = request.get_data()
+@admin.route('/update-blog/<int:id>', methods=['POST', 'GET'])
+@admin_required
+def update_blog(id):
+    '''
+    更新博客文章
+    '''
+    article = Article.query.get_or_404(id)
+    if request.method == "POST":
+        data = json.loads(request.get_data().decode('utf8'))
 
-        print('hello')
+        body_origin = data['body_origin']
+        body_html = data['body']
+        # 第一次清洗contenteditable标签
+        body_html = ''.join(body_html.split("contenteditable=\"true\""))
+        # 第二次清洗table标签
+        body_html = ''.join(body_html.split(
+            "class=\"ck-editor__editable ck-editor__nested-editable\""))
+
+        article.title = data['title']
+        article.aritcle_type_id = data['type']
+        article.body_html = body_html
+        article.body_origin = body_origin
+        article.last_change_time = datetime.datetime.utcnow()
+        db.session.commit()
+        return jsonify({
+            'status': '200',
+            'id':  article.id
+        })
+
+    form = ArticleForm()
+    types = ArticleType.query.all()
+    return render_template('admin/write_blog.html', form=form,
+                           types=types, article=article, have_article=True,)
 
 
 @admin.route('/', methods=['POST', 'GET'])
 @admin_required
 def admin():
-    return render_template('admin/main.html')
+    blog_count = Article.query.count()
+    user_count = User.query.count()
+    return render_template('admin/main.html', blog_count=blog_count,
+                           user_count=user_count)
+
+
+###############################################################################

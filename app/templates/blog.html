@@ -1,23 +1,221 @@
+<!DOCTYPE html>
+<html>
 
-<style>
-  
-  
-    body{
-    width: 100%;
-    font-size: 16px;
-    background-color: #fff;
-    line-height: 2em;
-    }
+<head>
 
-   
-    .paper{
-        padding: 20px 40px;
-        border:1px solid ;
-        border-color:#e7e7e7;
-		box-shadow: 15px 5px 20px #CCC
-    }
-  </style>
- 
- 
+    <title>{{blog.title}}</title>
 
-    {{blog.body_html|safe}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{{url_for('static',filename='css/editormd.preview.css')}}"> -->
+    <link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
+    <link rel="icon" href="../static/ico/my.ico" type="image/x-icon">
+    
+
+
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/xadmin/font.css">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/blog.css" >
+    <link>
+
+
+    <style>
+        body {
+            width: 100%;
+            font-size: 16px;
+            background-color: #fff;
+            line-height: 2em;
+            background-image: url("/static/blog_back/7.png")
+
+        }
+        hr{
+            background-color:#CCC   
+        }
+
+
+        .paper {
+            padding: 20px 40px;
+            /* border: 1px solid; */
+            /* background-color: #efefef; */
+            background-color:#F0F0F0;
+            /* border-radius: 10px; */
+            /* box-shadow: 15px 5px 20px #CCC; */
+
+            position: relative;
+            border: 6px solid #fff;
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+
+        }
+
+@media only screen and (max-width: 600px) {
+    .paper {
+            width: 100%;
+            padding: 20px 0px;
+            background-color: #fff;
+        }
+        img{
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin-right: auto;
+            margin-left: auto;
+        }
+}
+
+
+        
+@media only screen and (min-width: 768px) {
+
+
+        .paper-before{
+
+            content: "";
+            height: 100%; width:100%;
+            background: #eff4de;
+            border: 6px solid #fff;
+            position: absolute;
+            z-index: -2;
+            top: 0px;
+            left: 0px;
+
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+
+
+            /* transform-origin: left bottom; */
+            /* -webkit-transform: rotate(-5deg);
+            -moz-transform: rotate(-5deg);
+            -o-transform: rotate(-5deg);
+            -ms-transform: rotate(-5deg);
+            transform: rotate(-5deg); */
+
+        }
+        .paper-after{
+            content: "";
+            height: 100%; width: 100%;
+            background: lightblue;
+            border: 6px solid #fff;
+            position: absolute;
+            z-index: -1;
+            top: 0px;
+            left: 0px;
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+
+
+            /* transform-origin: left bottom; */
+            /* -webkit-transform: rotate(4deg);
+            -moz-transform: rotate(4deg);
+            -o-transform: rotate(4deg);
+            -ms-transform: rotate(4deg);
+            transform: rotate(4deg); */
+        }
+
+        /* .paper-third{
+            content: "";
+            height: 100%; width: 100%;
+            background: lightblue;
+            border: 6px solid #fff;
+            position: absolute;
+            z-index: -3;
+            top: 0px;
+            left: 0px;
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            transform-origin: left bottom;
+            transform: rotate(-4deg); 
+
+            -webkit-transform: rotate(4deg);
+            -moz-transform: rotate(4deg);
+            -o-transform: rotate(4deg);
+            -ms-transform: rotate(4deg);
+        }*/
+
+    } 
+/* media end */
+
+
+
+        
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row clearfix">
+            <div class="col-xs-12">
+          
+            </div>
+            <div class="col-md-8 col-md-offset-2 col-xs-12">
+                <div class="paper-before"></div>  
+                <div class="paper">
+                    
+                    <h1 >{{blog.title}}</h1>
+                    <!-- 博客文章从这开始 -->
+                    {{blog.body_html|safe}}
+                    <!-- 到这结束 -->
+                </div>
+                <div class="paper-after"></div>    
+                <div class="paper-third"></div>    
+
+                               
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <script src="/static/js/jquery-1.11.1.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+    <script src="/static/layui/layui.js"></script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // $("img").addClass("img-responsive center-block");
+            // $("[contenteditable]").removeAttr("contenteditable")
+            $("h1,h2,h3,h4").after("<hr>")
+
+            $("table").attr("class","layui-table")
+
+
+           
+            
+
+        });
+        function get_deg(para) {
+            var x = para
+            var totla_x	
+            var $height = $('.paper').outerHeight()
+            var $width = $('.paper').outerWidth()
+
+            totla_x = x + ($width/2)
+            c = Math.sqrt($width*$width+$height*$height)/2
+            sinx = totla_x/c //余弦值
+            deg = 180/Math.PI * Math.acos(sinx) //通过余弦值求角度
+            deg2 = 180/Math.PI * Math.asin($width/2/c)//通过余弦值求角度
+
+            deg3 = 90-deg -deg2//最终角度
+            return deg3
+          }
+        //   $('.paper-third').css("transform", "rotate"+"("+get_deg(-50)+"deg"+")")
+
+          $('.paper-before').css("transform", "rotate"+"("+get_deg(30)+"deg"+")")
+          $('.paper-after').css("transform", "rotate"+"("+get_deg(10)+"deg"+")")
+
+
+        
+    </script>
+
+</body>
+
+</html>
