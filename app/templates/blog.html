@@ -20,6 +20,9 @@
 
 
     <style>
+    
+ 
+    
         body {
             width: 100%;
             font-size: 16px;
@@ -157,7 +160,10 @@
                     
                     <h1 >{{blog.title}}</h1>
                     <!-- 博客文章从这开始 -->
-                    {{blog.body_html|safe}}
+                    <!-- {{blog.body_html|safe}} -->
+                    <div name = "textarea" id="editor">
+                            {{blog.body_origin|safe}}
+                        </div>
                     <!-- 到这结束 -->
                 </div>
                 <div class="paper-after"></div>    
@@ -175,6 +181,8 @@
     <script src="/static/js/jquery-1.11.1.js"></script>
     <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
     <script src="/static/layui/layui.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/decoupled-document/ckeditor.js"></script>
+
 
 
 
@@ -192,6 +200,7 @@
             
 
         });
+
         function get_deg(para) {
             var x = para
             var totla_x	
@@ -211,6 +220,46 @@
 
           $('.paper-before').css("transform", "rotate"+"("+get_deg(30)+"deg"+")")
           $('.paper-after').css("transform", "rotate"+"("+get_deg(10)+"deg"+")")
+
+          DecoupledEditor
+            .create(document.querySelector('#editor'),{
+
+                 ckfinder: {
+                    // Upload the images to the server using the CKFinder QuickUpload command.
+                    uploadUrl: "http://127.0.0.1:5000/admin/img"
+                },  
+
+                image: {
+                // You need to configure the image toolbar, too, so it uses the new style buttons.
+                toolbar: [   'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight','|','imageTextAlternative' ],
+                styles: [
+                    // This option is equal to a situation where no style is applied.
+                    'full',
+    
+                    // This represents an image aligned to the left.
+                    'alignLeft',
+    
+                    // This represents an image aligned to the right.
+                    'alignRight'
+                ]
+             },
+
+
+            })
+            .then(editor => {
+                editor.isReadOnly = true; //将编辑器设为只读
+                // const toolbarContainer = document.querySelector('#toolbar-container');
+
+                // toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+                
+                // editor.setData(data);   
+
+            })
+    
+            .catch(error => {
+                console.error(error);
+            });
+            
 
 
         
