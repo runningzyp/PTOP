@@ -15,7 +15,7 @@
 {% endblock %}
 
 
-{% block content %}
+{% block page_content %}
 
 <div style="padding: 15px;">
 
@@ -23,17 +23,16 @@
 
 </div>
 
-{% endblock content %}
+{% endblock %}
           
  
-    
+
 {% block scripts %}
 {{super()}}
    <!-- 模板引擎 -->
    <script src="/static/js/admin/admin.js"></script>
-
-   {% raw %}
    
+   {% raw %}
    <script type="text/html" id="barDemo">
        <a class="layui-btn layui-btn-sm layui-btn-primary" href = "{{ d.url }}",lay-event="detail">查看</a>
        <a class="layui-btn layui-btn-sm " lay-event="edit">编辑</a>

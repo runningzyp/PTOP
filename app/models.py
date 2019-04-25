@@ -125,8 +125,7 @@ class Article(db.Model):
     last_change_time = db.Column(
         db.DateTime, index=True, default=datetime.utcnow)
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
-    body_html = db.Column(db.Text)
-    body_origin = db.Column(db.Text)    
+    body_origin = db.Column(db.Text)
     is_submit = db.Column(db.Boolean)
 
     articleimages = db.relationship('ArticleImage', backref='article',
@@ -151,8 +150,7 @@ class Article(db.Model):
             'id': self.id,
             'url': url_for('main.blog', id=self.id, _external=True),
             'title': self.title,
-            'body_html': self.body_html,
-            'body_origin':self.body_origin,
+            'body_origin': self.body_origin,
             'finish_time': self.finish_time,
             'last_change_time': self.last_change_time,
             "article_type_id": self.article_type_id,

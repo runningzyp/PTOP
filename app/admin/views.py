@@ -130,16 +130,9 @@ def write_blog():
         data = json.loads(request.get_data().decode('utf8'))
         title = data['title']
         body_origin = data['body_origin']
-        body_html = data['body']
-
-        # 第一次清洗contenteditable标签
-        body_html = ''.join(body_html.split("contenteditable=\"true\""))
-        # 第二次清洗table标签
-        body_html = ''.join(body_html.split(
-            "class=\"ck-editor__editable ck-editor__nested-editable\""))
 
         aritcle_type_id = data['type']
-        article = Article(title=title, body_html=body_html, body_origin=body_origin,
+        article = Article(title=title, body_origin=body_origin,
                           article_type_id=aritcle_type_id)
         db.session.add(article)
         db.session.commit()
@@ -164,16 +157,9 @@ def update_blog(id):
         data = json.loads(request.get_data().decode('utf8'))
 
         body_origin = data['body_origin']
-        body_html = data['body']
-        # 第一次清洗contenteditable标签
-        body_html = ''.join(body_html.split("contenteditable=\"true\""))
-        # 第二次清洗table标签
-        body_html = ''.join(body_html.split(
-            "class=\"ck-editor__editable ck-editor__nested-editable\""))
 
         article.title = data['title']
         article.aritcle_type_id = data['type']
-        article.body_html = body_html
         article.body_origin = body_origin
         article.last_change_time = datetime.datetime.utcnow()
         db.session.commit()

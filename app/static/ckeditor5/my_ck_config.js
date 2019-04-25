@@ -43,86 +43,40 @@ class MyUploadAdapter {
   }
 //   $SCRIPT_ROOT+"admin/upload-blog-image"
 
-     ClassicEditor.create( document.querySelector( '#editor' ), {
-            
-            placeholder: 'Type the content here!',
-            fontFamily: {
-                options: [
-                    'default',
-                    'Ubuntu, Arial, sans-serif',
-                    'Ubuntu Mono, Courier New, Courier, monospace'
-                ]
-            },
-            toolbar: {
-                viewportTopOffset : 50, 
-                items: [
-                    'heading',
-                    '|',
-                    'alignment',                                                 // <--- ADDED
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikethrough',
-                    'blockQuote',
-                    '|',
-                    'fontSize',  
-                    'fontColor', 
-                    'fontBackgroundColor',
-                    'highlight',
-                    '|',
-                    'code',
-                    'subscript',
-                    'superscript',
-                    '|',
-                    'link',
-                    'bulletedList',
-                    'numberedList',
-                    'insertTable',
-                    'imageUpload',
-                    'mediaEmbed',
-                    'undo',
-                    'redo',
-                    // 'removeFormat', 删除格式 未安装
-                   
-                ]
-             },
-
-            //自定义版本不需要      
-
-            //  ckfinder: {
-            //     // Upload the images to the server using the CKFinder QuickUpload command.
-            //     uploadUrl: $SCRIPT_ROOT+"admin/upload-blog-image"
-            // },           
-            image: {
-                // You need to configure the image toolbar, too, so it uses the new style buttons.
-                toolbar: [   'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight','|','imageTextAlternative' ],
-                styles: [
-                    // This option is equal to a situation where no style is applied.
-                    'full',
+DecoupledEditor
+.create(document.querySelector('#editor'),{
     
-                    // This represents an image aligned to the left.
-                    'alignLeft',
-    
-                    // This represents an image aligned to the right.
-                    'alignRight'
-                ]
-            },
-            fontSize: {
-                options: [8, 9, 10, 11, 12, 'default', 14, 16, 18, 20, 22, 24, 26, 28, 36, 44, 48, 72],
-              },
-            heading: {
-                options: [
-                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                ]
-            },
-            
-            language: 'zh-cn',
-    })
+    viewportTopOffset : 50,  
+
+     ckfinder: {
+        // Upload the images to the server using the CKFinder QuickUpload command.
+        uploadUrl: "http://127.0.0.1:5000/admin/img"
+    },  
+
+    image: {
+    // You need to configure the image toolbar, too, so it uses the new style buttons.
+    toolbar: [   'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight','|','imageTextAlternative' ],
+    styles: [
+        // This option is equal to a situation where no style is applied.
+        'full',
+
+        // This represents an image aligned to the left.
+        'alignLeft',
+
+        // This represents an image aligned to the right.
+        'alignRight'
+    ]
+ },
+
+
+})
 .then( editor => {
-    // 加载了适配器
+    
+      const toolbarContainer = document.querySelector('#toolbar-container');
+
+                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+
+                // 加载了适配器
     editor.plugins.get('FileRepository').createUploadAdapter = (loader)=>{
         return new MyUploadAdapter (loader);
     };
