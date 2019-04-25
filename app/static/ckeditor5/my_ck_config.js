@@ -47,12 +47,15 @@ DecoupledEditor
 .create(document.querySelector('#editor'),{
     
     viewportTopOffset : 50,  
+    toolbar: {
+        items: ["heading",  "|", "bold", "italic", "underline", "strikethrough", "highlight", "|", "alignment", "|", "numberedList", "bulletedList", "|", "link", "blockquote", "imageUpload", "insertTable", "mediaEmbed", "|", "undo", "redo"]
+    },
 
      ckfinder: {
         // Upload the images to the server using the CKFinder QuickUpload command.
         uploadUrl: "http://127.0.0.1:5000/admin/img"
-    },  
-
+    }, 
+  
     image: {
     // You need to configure the image toolbar, too, so it uses the new style buttons.
     toolbar: [   'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight','|','imageTextAlternative' ],
@@ -68,11 +71,12 @@ DecoupledEditor
     ]
  },
 
+ language: 'zh-cn',
 
 })
 .then( editor => {
     
-      const toolbarContainer = document.querySelector('#toolbar-container');
+      const toolbarContainer = document.querySelector('#ck-toolbar');
 
                 toolbarContainer.appendChild(editor.ui.view.toolbar.element);
 

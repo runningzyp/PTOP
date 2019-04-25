@@ -21,12 +21,28 @@
     <link rel="stylesheet" href="/static/x-admin/css/xadmin.css">
     <link rel="stylesheet" href="/static/x-admin/css/font.css">
     <style>
-       .sub-menu .layui-this{
+
+        .sub-menu .layui-this {
             background-color: #393D49
-       }
-       .sub-menu .layui-this a{
+        }
+
+        .sub-menu .layui-this a {
             color: #fff
-       }
+        }
+
+        li.home.layui-this {
+            height: 40px;
+        }
+
+        .page-content .layui-tab-title {
+            height: 40px;
+            border: none;
+        }
+
+        /* .page-content .layui-tab-content {
+            overflow-y: auto;
+        } */
+
     </style>
 
     {% endblock %}
@@ -135,36 +151,21 @@
     <!-- 左侧菜单结束 -->
     <!-- 右侧主体开始 -->
     <div class="page-content">
-        <div class="layui-tab tab" lay-allowclose="false">
-
-          <ul class="layui-tab-title">
-            <li class="home layui-this"><i class="layui-icon">&#xe68e;</i>{% block tab%} {% endblock %}</li>
+        {% block tab %}
+          <ul class="layui-tab-title" >
+            <li class="home layui-this"><i class="layui-icon">&#xe68e;</i></li>
+            <li id ="ck-toolbar"></li>
           </ul>
-
+        {% endblock %}
 
           <div class="layui-tab-content">
-            <div class="layui-tab-item layui-show">
-
             {% block page_content %}    
 
             {% endblock %}
-
-            </div>
           </div>
 
-
-          <div id="tab_show"></div>
-        </div>
     </div>
 
-    <div class="page-content-bg"></div>
-    <!-- 右侧主体结束 -->
-    <!-- 中部结束 -->
-    <!-- 底部开始 -->
-    <div class="footer">
-        <div class="copyright">Copyright ©2017 x-admin v2.3 All Rights Reserved</div>  
-    </div>
-    <!-- 底部结束 -->
 
 
 
