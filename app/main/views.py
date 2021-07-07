@@ -8,14 +8,11 @@ from flask import (current_app, flash, jsonify, redirect, render_template,
                    request, session, url_for)
 from flask_login import (current_user, login_manager, login_required,
                          login_user, logout_user)
-from werkzeug import secure_filename  # 安全的文件名
 
 from . import main
 from .. import auth, db
-from ..decorators import admin_required
-from ..email import send_email
-from ..models import Article, ArticleType, Data, User
-from ..net_tools import ali_oss
+from ..models import Article, ArticleType, Data, User, AliConfig, Comment
+from ..utils import ali_oss
 from .forms import ArticleForm
 
 
@@ -35,12 +32,12 @@ def index():
 def blogs():
     if request.method == "POST":
         data = json.loads(request.get_data().decode('utf8'))
-        article = Article.query.filter_by(
-            article_type_id=data['type']).order_by(
-                Article.finish_time.desc()).paginate(data['page'],
-                                                     1, error_out=False)
+        article = Article.query.filter_by(article_status='submited',
+                                          article_type_id=data['type']).order_by(
+            Article.finish_time.desc()).paginate(data['page'],
+                                                 5, error_out=False)
         try:
-            data = article.items[0].to_json()
+            data = [item.to_json() for item in article.items]
         except IndexError as e:
             return jsonify({'status': '400', 'data': str(e)})
         except Exception as e:
@@ -48,7 +45,7 @@ def blogs():
         else:
             return jsonify({
                 'status': '200',
-                'data': article.items[0].to_json()
+                'data': data
             })
 
     articletypes = ArticleType.query.order_by(ArticleType.id.asc()).all()
@@ -61,7 +58,41 @@ def blogs():
 @main.route('/blog/<int:id>')
 def blog(id):
     blog = Article.query.get_or_404(id)
-    return render_template('blog.html', blog=blog)
+    blog.visit_num += 1
+    db.session.commit()
+    comments = blog.comments.order_by(Comment.time.desc())
+    return render_template('blog.html', blog=blog, comments=comments)
+
+
+@main.route('/blog/add-comment', methods=["POST"])
+def add_comment():
+    if request.method == "POST":
+        data = json.loads(request.get_data().decode('utf-8'))
+        email = data['email']
+        print(email)
+        name = data['name']
+        content = data['comment']
+        article_id = data['article_id']
+        try:
+            print(">>>>>>"+email)
+            new_comment = Comment(email=email, name=name,
+                                  content=content, article_id=article_id)
+            db.session.add(new_comment)
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                "status": "400",
+                "message": e
+            })
+        else:
+            db.session.commit()
+            return jsonify({
+                "status": "200",
+                "message": "回复成功",
+                "time": new_comment.time,
+                'email': new_comment.email,
+                "content": new_comment.content
+            })
 
 
 @main.route('/userlogout')
@@ -74,44 +105,42 @@ def userlogout():
 @main.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
+    print(current_user.role.aliconfig)
     user = User.query.filter_by(username=username).first()
     if username != current_user.username:
         return render_template('404.html'), 404
 
     data = user.data.order_by(Data.timestamp.asc()).all()
-    host = ali_oss.get_host()+'/'
-    return render_template('user.html', data=data, user=user, host=host)
+    return render_template('user.html', data=data, user=user)
 
 
 @main.route('/get-token', methods=['POST', 'GET'])
 def get_token():
-    user_dir = current_user.email+"/"
+    user_dir = current_user.email
+    aliconfig = current_user.role.aliconfig
     if request.method == 'POST':
-        return ali_oss.get_token(user_dir)
+        return ali_oss.get_token(aliconfig, user_dir)
 
 
 @main.route('/call-back', methods=['POST', 'GET'])
 def call_back():
     if request.method == 'POST':
-
-        host = ali_oss.get_host()
+        aliconfig = current_user.role.aliconfig
+        aliconfig.host
 
         sec_filename = request.form.get('filename')
+        print(sec_filename)
         filename = sec_filename.split('/')[-1]
+        print(filename)
         email = sec_filename.split('/')[0]
-        user = User.query.filter_by(email=email).first()
+        print(email)
+
         bucket = request.form.get('bucket')
         filetype = request.form.get('mimeType')  # 文件类型
 
         dt = datetime.datetime.utcnow()
 
-        data = Data(filename=filename, sec_filename=sec_filename,
-                    filetype=filetype,
-                    author=user)
-        db.session.add(data)
-
-        url = host+'/' + sec_filename
-        return json.dumps({'filename': filename, 'url': url})
+        return json.dumps({'filename': filename, 'url': "baidu.com"})
     return 'success'
 
 
@@ -122,7 +151,7 @@ def sendmessage():
     device_type = request.args.get('device_type', '')
     if text is not None:
         data = Data(text=text,
-                    author=current_user._get_current_object())
+                    owner=current_user._get_current_object())
         db.session.add(data)
     return jsonify(result='success')
 
@@ -146,20 +175,11 @@ def sendfile():
             file.save(os.path.join(persional_folder, sec_filename))
             data = Data(filename=filename, sec_filename=sec_filename,
                         device_type=device_type,
-                        author=current_user._get_current_object())
+                        owner=current_user._get_current_object())
             db.session.add(data)
         except:
             file = None
         return jsonify({'name': filename, 'url': sec_filename})
-
-
-@main.route('/uploads/<filename>')
-@login_required
-def uploaded_file(filename):
-    user = User.query.filter_by(username=current_user.username).first()
-    persional_folder = UPLOAD_FOLDER+user.email
-    return send_from_directory(persional_folder,
-                               filename)
 
 
 @main.route('/register')
@@ -173,6 +193,11 @@ def secret():
     return 'you can'
 
 
-@main.route('/about_me')
+@main.route('/about-me')
 def about():
     return render_template('about_me.html')
+
+
+@main.route('/test')
+def test():
+    return render_template('test.html', a=[1, 2, 3, 4])

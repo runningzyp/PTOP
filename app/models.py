@@ -1,15 +1,15 @@
-
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 # from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request, url_for
 
-from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 from flask_sqlalchemy import event
 # from .decorators import admin_required
+
+from .utils import ali_oss
 
 
 class Permission:
@@ -24,9 +24,11 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    default = db.Column(db.Boolean, default=False, index=True)
+    default = db.Column(db.Boolean, default=False)
     permissions = db.Column(db.Integer)
     users = db.relationship('User', backref='role', lazy='dynamic')
+    aliconfig = db.relationship(
+        'AliConfig', backref='role', uselist=False)
 
     @staticmethod
     def insert_roles():
@@ -58,16 +60,17 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userkey = db.Column(db.String(10), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    password = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128))
     email = db.Column(db.String(64), unique=True, index=True)
+    join_time = db.Column(db.DateTime, default=datetime.utcnow)
+    is_verified = db.Column(db.Boolean, default=False)
+
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    data = db.relationship('Data', backref='author', lazy='dynamic')
+    data = db.relationship('Data', backref='owner', lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
-            # print(current_app.config['FLASKY_ADMIN'])
-            # print(self.email == current_app.config['FLASKY_ADMIN'])
             if self.email == current_app.config['FLASKY_ADMIN']:
                 self.role = Role.query.filter_by(permissions=0xff).first()
                 self.userkey = None
@@ -81,16 +84,27 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
 
+    @property
+    def password(slef):
+        raise AttributeError('密码不可读')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     def __repr__(self):
         return '<User %r>' % self.username
 
     def to_json(self):
         json_user = {
             'id': self.id,
-            'userkey': self.userkey,
             'username': self.username,
             "role_id": self.role_id,
-            "role": Role.query.filter(Role.id == self.role_id).first().name
+            "role": self.role.name,
+            "join_time": self.join_time
         }
         return json_user
 
@@ -111,10 +125,11 @@ class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
     filename = db.Column(db.String(128), default=None)
-    sec_filename = db.Column(db.String(128), default=None)
-    filetype = db.Column(db.String(128), default=None)
+    size = db.Column(db.String(128))
+    url_prefix = db.Column(db.String(128))
+    filetype = db.Column(db.String(128))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 class Article(db.Model):
@@ -126,12 +141,20 @@ class Article(db.Model):
         db.DateTime, index=True, default=datetime.utcnow)
     article_type_id = db.Column(db.Integer, db.ForeignKey('articletypes.id'))
     body_origin = db.Column(db.Text)
-    is_submit = db.Column(db.Boolean)
 
-    articleimages = db.relationship('ArticleImage', backref='article',
-                                    lazy='dynamic',
-                                    cascade='all, delete-orphan',
-                                    passive_deletes=True)
+    visit_num = db.Column(db.Integer, default=0)
+
+    article_status = db.Column(db.String(12), default='submited')
+
+    images = db.relationship('ArticleImage', backref='article', lazy='dynamic')
+    # 评论
+    comments = db.relationship('Comment', backref='article', lazy='dynamic',
+                               cascade="all, delete-orphan",
+                               passive_deletes=True)
+
+    @property
+    def local_time(self):
+        return (self.finish_time + timedelta(hours=8)).strftime('%Y年%m月%d日 %H:%M')
 
     def admin_to_json(self):
         json_article = {
@@ -160,38 +183,18 @@ class Article(db.Model):
 
     def __repr__(self):
         return '<Article %s>' % self.title
-    '''
-    @staticmethod
-    def generate_fake(count=100):
-        
-        # 测试数据,生产环境不需要
-        
-        from random import seed
-        from random import randint
-        import forgery_py
-
-        seed()
-        for i in range(count):
-            a = Article(title=forgery_py.lorem_ipsum.title(),
-                        body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                        timestamp=forgery_py.date.date(True),
-                        article_type_id=randint(1, 3),
-                        body_html=None
-                        )
-            db.session.add(a)
-            db.session.commit()
-    '''
-
-
-# db.event.listen(Article.body, 'set', Article.on_changed_body)
 
 
 class ArticleImage(db.Model):
     __tablename__ = 'articleimages'
     id = db.Column(db.Integer, primary_key=True)
-    imagename = db.Column(db.String(128))
-    article_id = db.Column(db.Integer, db.ForeignKey(
-        'articles.id', ondelete='CASCADE'))
+
+    origin_name = db.Column(db.String(128))
+    full_path = db.Column(db.String(128))
+    size = db.Column(db.String(128))
+    image_url = db.Column(db.String(128))
+    add_time = db.Column(db.DateTime, default=datetime.utcnow)
+    article_id = db.Column(db.Integer, db.ForeignKey('articles.id'))
 
 
 class ArticleType(db.Model):
@@ -210,6 +213,83 @@ class ArticleType(db.Model):
                 _type = ArticleType(name=t)
             db.session.add(_type)
         db.session.commit()
+
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64))
+    email_hash = db.Column(db.String(64))
+    name = db.Column(db.String(64))
+    content = db.Column(db.Text)
+    time = db.Column(db.DateTime, default=datetime.utcnow)
+    reply = db.Column(db.Text)
+    reply_confirm = db.Column(db.Boolean, default=False)
+    article_id = db.Column(db.Integer, db.ForeignKey(
+        'articles.id', ondelete='CASCADE'))
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if self.email is not None and self.email_hash is None:
+            self.email_hash = hashlib.md5(
+                self.email.encode('utf-8')).hexdigest()
+
+    def to_json(self):
+        json_article = {
+            'id': self.id,
+            'email': self.email,
+            'hash_email': self.hash_email,
+            "content": self.content,
+            'time': self.time,
+            "reply": self.reply,
+            "article_id": self.article_id,
+            "aricle_title": self.article.title
+        }
+        return json_article
+
+    @property
+    def hash_email(self):
+        return hashlib.md5(self.email.encode('utf-8')).hexdigest()
+
+    @property
+    def local_time(self):
+        return self.time + timedelta(hours=8)
+
+
+class AliConfig(db.Model):
+    __tablename__ = 'aliconfig'
+    id = db.Column(db.Integer, primary_key=True)
+    config_name = db.Column(db.String(32))
+
+    access_key_id = db.Column(db.String(128))
+    access_key_secret = db.Column(db.String(128))
+    host = db.Column(db.String(128))
+    bucket = db.Column(db.String(128))
+    callback_url = db.Column(db.String(128))
+    expire_time = db.Column(db.Integer)
+    url_prefix = db.Column(db.String(128))
+
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+# 验证码
+
+
+class VerificationCode(db.Model):
+    __tablename__ = 'verificationcodes'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(32))
+    code = db.Column(db.String(6))
+    expire_time = db.Column(
+        db.DateTime, default=datetime.utcnow() + timedelta(minutes=30),
+        index=True)
+
+
+class Settings(db.Model):
+    __tablename__ = 'settings'
+    id = db.Column(db.Integer, primary_key=True)
+    mail_username = db.Column(db.String(32))
+    mail_password = db.Column(db.String(32))
+    mail_post = db.Column(db.Integer)
 
 
 @login_manager.user_loader

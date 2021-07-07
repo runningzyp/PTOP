@@ -1,42 +1,142 @@
 
 
 {%extends 'base.html'%}
-{% import "bootstrap/wtf.html" as wtf %}
 {% block title %}注册{% endblock %}
-{% block page_content %}
-<div class = "row clearfix" >
-		<div class = "col-md-12 column" >
-            <h1 style="text-align: center">欢迎注册!</h1>
-		</div>
-    </div>
-
-<div class="row clearfix">
-    <div class="col-md-2 column">
-    </div>
-    <div class="col-md-8 column">
-        <div class="jumbotron">
-                <form action="" method="post" class="form" role="form">
-                <!-- {{ wtf.quick_form(form) }} -->
-                {{ form.hidden_tag() }}
-                {{ wtf.form_field(form.email,class= "form-control") }}
-                {{ wtf.form_field(form.username,class= "form-control") }}
-                {{ wtf.form_field(form.password,class= "form-control") }}
-                {{ wtf.form_field(form.password2 ,class= "form-control") }}
-                <!-- {{ form.submit(class_="form-control btn-primary btn-block") }} -->
-                {{ wtf.form_field(form.submit, class="form-control btn btn-primary btn-block") }}
-            </form>
+{% block styles %}
+{{super()}}
+<style>
+    .layui-input-inline{
+        margin-left: 30px;
+    }
+    .layui-input{
+        background-color: #fff0;
+    }
+</style>
+{% endblock %}
+{% block main %}
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <h1 style="text-align: center">注册</h1>
+        </div>
+        <div class="layui-col-md8 layui-col-md-offset2">
+                <form class="layui-form" action="" method="POST" id = "form"> 
+                            <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="email" id= 'email' lay-verify="email" autocomplete="off" class="layui-input">
+                                    </div>
+                            </div>
+                              <div class="layui-form-item">
+                                <label class="layui-form-label">验证码</label>
+                                <div class="layui-input-inline">
+                                  <input  name="code" lay-verify="required"  autocomplete="off" class="layui-input">
+                                </div>
+                                <button class="layui-btn " type="button" id= "code">发送验证码</button>
+                              </div>
+                              <div class="layui-form-item">
+                                    <label class="layui-form-label">用户名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="username" required lay-verify="username"  autocomplete="off" class="layui-input">
+                                    </div>
+                            </div>
+                            <div class="layui-form-item">
+                                    <label class="layui-form-label">密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="password"  required lay-verify="pass" autocomplete="off" class="layui-input">
+                                    </div>
+                            </div>
+                            <div class="layui-form-item">
+                                    <label class="layui-form-label">验证密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="password2"  lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                            </div>
+                            <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                      <button class="layui-btn" lay-filter="*"  lay-submit="">立即提交</button>
+                                      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                            </div>
+                    </form>
+            
         </div>
     </div>
-    <div class="col-md-2 column">
-    </div>
 </div>
- <!-- <form  name= "register-form" id ="form"  method="post" >
-    <input type="text" class="form-control" id="email" name="email" required>
-    <input type="text"  class="form-control" id="username" name="username" required>
-    <input type="password" class="form-control" id="password" name="password" required>
-    <input type="submit" class="form-control" id="submit" name="submit" value="submit">
-</form> -->
 
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+         var wait = 60;
+           function time(button) {
+               if (wait == 0) {
+                button.removeClass("layui-btn-disabled")
+                button.removeAttr("disabled")
+                button.text("发送验证码");
+                   wait = 60;
+               } else {
+                button.addClass("layui-btn-disabled")
+                button.attr("disabled","disabled")            
+                button.text(wait + "秒后重新发送");
+                wait--;
+                   setTimeout(function () {time(button);},1000);
+               }
+           }
+    
+
+    $("#code").click(function(){
+        
+        if ($("#email").val()!=""){
+            var button = $('#code');
+            time(button);
+            $.ajax({
+            type: "post",
+            url: $SCRIPT_ROOT+"/auth/get-code",
+            data: JSON.stringify({
+               "email": $("#email").val(),
+            }),
+            success: function (response) {
+                if (response.status == 200){
+                    layer.msg(response.message)
+                }else{
+                    layer.msg(response.message);
+                    wait =0;
+                }
+                
+            },
+            error:function (response){
+                layer.msg("请检查邮箱格式");
+                wait =0;
+            }
+         });
+        }else{
+            layer.msg("邮箱不能为空")
+        }
+    })
+    var form = layui.form
+
+    form.verify({
+        username: function(value, item){ //value：表单的值、item：表单的DOM对象
+            if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+            return '用户名不能有特殊字符';
+            }
+            if(/(^\_)|(\__)|(\_+$)/.test(value)){
+            return '用户名首尾不能出现下划线\'_\'';
+            }
+            if(/^\d+\d+\d$/.test(value)){
+            return '用户名不能全为数字';
+            }
+        }
+        
+        //我们既支持上述函数式的方式，也支持下述数组的形式
+        //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+        ,pass: [
+            /^[\S]{6,12}$/
+            ,'密码必须6到12位，且不能出现空格'
+        ] 
+    }); 
+</script>
 {% endblock %}
 
 

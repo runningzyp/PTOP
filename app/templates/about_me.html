@@ -1,64 +1,157 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-
 <head>
-	<meta charset="utf-8">
-	<title>关于我</title> 
-    <link rel="stylesheet" href="../static/css/about_me.css" >
-    <link rel="shortcut icon" href="../static/my.ico" type="image/x-icon">
-    <link rel="icon" href="../static/ico/my.ico" type="image/x-icon">   
+    <meta charset="utf-8">
+    <title>关于我</title>
+
+    <link rel="stylesheet" href="/static/css/about.css">
+    <link rel="shortcut icon" href="/static/my.ico" type="image/x-icon">
+    <link rel="icon" href="/static/ico/my.ico" type="image/x-icon">
+
+
+    <style>
+        @font-face {
+            font-family: 'myfonts';
+            src: url('/static/fonts/myFont.ttf');
+        }
+
+        p {
+            font-family: 'Indie Flower','myfonts'!important;;
+            line-height: 10px!important;
+        }
+        p>a{
+            text-decoration: none;
+            color: #1abc9b
+        }
+
+        .back {
+            width: 300px;
+            height: 400px;
+            background-color: #fde3a7;
+        }
+
+        .back img {
+            box-shadow: 0 0 black;
+            width: 200px;
+            margin-left: 100px;
+            margin-bottom: 0px;
+            margin-top: 120px;
+
+        }
+        .header{
+            width: 90%;
+            max-width: 1060px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 30px 50px
+        }
+        .clearfix:before, .clearfix:after {
+    content: " ";
+    display: table;
+}
+header h1 {
+    font-size: 34px;
+    line-height: 38px;
+    margin: 0;
+    font-weight: 700;
+    color: #333;
+    float: left;
+}
+.codrops-demos {
+    float: right;
+}
+.codrops-demos a {
+    display: inline-block;
+    margin: 10px;
+    color: #666;
+    font-weight: 700;
+    line-height: 30px;
+    border-bottom: 4px solid transparent;
+    text-decoration:none;
+    font-size: 14px;
+}
+.codrops-demos a:hover {
+    color: #000;
+    border-color: #000;
+}
+.support-note {
+    color: #d7823e;
+    font-size: 16px;
+    display: block;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 0;
+    text-align: left;
+    clear: both;
+}
+.clearfix:before, .clearfix:after {
+    content: " ";
+    display: table;
+}
+.container {
+    width: 100%;
+    position: relative;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", Tahoma, Arial, sans-serif!important    ;
+}
+.container > header {
+    width: 90%;
+    max-width: 1060px;
+    margin: 0 auto;
+    position: relative;
+    padding: 0 30px 50px 30px;
+}
+header {
+    padding: 30px 30px 40px 30px!important;
+}
+   
+    </style>
 </head>
 
-<body>
-<header class="myheader">
 
-		<nav class="navbar">
-                <div class="container">
-                        <a name="here"></a>
-                        <ul>
-                        <li class="myli"><a href="{{url_for('main.index')}}">主页</a></li>
-                        </ul>
-                        <ul style="padding-left:10%">
-                       
-                        <li class="myli"><a href="{{url_for('main.blogs')}}">我的博客</a></li>
-                          <!-- <li class="myli"><a href="{{url_for('main.about')}}">关于我</a></li> -->
-                        </ul>
-                       
-                    </div>
-            </nav>
-</header>
-<section id ="sec">
-    <div>
-        <div>
-            <img src="{{url_for('static',filename='img/1header.png')}}" style="width:100%;height:100%">
+<body>
+        <div class="container">
+        <header class="clearfix">
+                <h1>香菜的小书桌</h1>
+                <nav class="codrops-demos">
+                    <!-- <a class="current-demo" href="">文本模式</a> -->
+                    <a href="#">关于我</a>
+                    <a id = 'change-back' href="{{url_for('main.blogs')}}">博客</a>
+                </nav>
+                <span class="support-note">欢迎来到香菜的博客</span>
+            </header>   
+        </div>
+
+    <div class="card">
+        <div class="imgBox">
+            <div class="bark">
+                <img src="/static/img/1header.png"
+                    style="width: 50%;margin-left: 25%;margin-top: 10%;border-radius: 50%">
+            </div>
+            <div class="back">
+                    <img src="/static/test.png" >
+
+            </div>
+            <!-- <h1>nihao</h1> -->
+
+        </div>
+        <div class="details">
+            <h4 class="color1">You got a Message! (YET)</h2>
+                    <p>姓名：湛允鹏</p>
+                    <p>EMAIL: 136688059@qq.com</p>
+                    <p>微博:<a href="https://weibo.com/5705735415/profile"> 小treezyp的微博</a></p>
+                    <p>Github:<a href="https://github.com/runningzyp"> https://github.com/runningzyp</a></p>
+                    
+                    <p class="text-right"></p>
+                    <p class="text-right"></p>
         </div>
     </div>
-    <div>
-            <h1>个人信息：</h1>
-            <hr>
-            <ul>
-                <li>姓名：湛允鹏</li>
-                <li>英文名：Steve</li>
-                <li>年龄：21</li>
-                <li>生日：1996/9/16</li>
-                <li>学历：本科大三计算机科学与技术</li>
 
-            </ul>
-            <h1>联系方式：</h1>
-            <hr>
-            <ul>
-                <li>EMAIL: 136688059@qq.com</li>
-                <li>WEIBO:<a href="https://weibo.com/5705735415/profile"> 小treezyp的微博</a></li>
 
-                <li> QQ:136688059</li>
-            </ul>
-            <h1>个人代码库：</h1>
-            <hr>
-            <ul>
-                <li>GITHUB:<a href="https://github.com/runningzyp"> https://github.com/runningzyp</a></li>
-                
-            </ul>
-    </div>
-</section>
+
+    <script type="text/javascript" size="150" alpha='0.3' zIndex="-2" src="/static/js/ribbon.js"></script>
+
+
+
 </body>
+
 </html>

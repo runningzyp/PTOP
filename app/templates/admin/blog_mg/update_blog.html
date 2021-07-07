@@ -1,0 +1,220 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %} 写文章 {% endblock %}
+
+{% block styles %}
+{{super()}}
+
+<style>
+.ck-content{
+    /* margin: 10 20px !important; */
+    padding:20px 40px!important;
+}
+
+.ck-content p,h1,h2,h3,h4{
+        margin: 0 0 15px;
+        word-break: break-word;
+}
+
+/* .ck-content { height: 500px; } */
+
+.ck.ck-toolbar.ck-reset_all.ck-rounded-corners{
+    border: none;
+}
+#posts{
+    font-size: 18px!important;
+}
+
+</style>
+
+{% endblock %}
+
+{% block tab_li %}
+<!-- 编辑器导航条 -->
+    <li id ="ck-toolbar"></li>
+{% endblock %}
+
+{% block page_content %}
+<div class="layui-fluid">
+<div class="layui-row">
+        <div class="layui-col-md9">
+                <!-- ck文章编辑器 -->
+                <div id = "posts" style="overflow-y: scroll">
+                        <div id="editor" style="margin-top: 10px">{{article.body_origin|safe}}</div>
+                </div>
+
+            </div>
+    <div class="layui-col-md3">
+        <div id ="files" >
+            <!-- form -->
+            <div class="layui-form layui-form-pane" action="#" method="POST">
+                {{form.hidden_tag()}}
+                <input style="display: none" name = "id" id = "article_id" value="{{article.id}}">
+                <div class="layui-form-item layui-row">
+                    <input class="layui-col-xs12 layui-input" id="title" name="title" value="{{article.title}} " required placeholder="请输入标题"
+                        style="border-style: none;border-bottom: 1px solid;">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">下拉选择框</label>
+                    <div class="layui-input-block">
+                        <select name="type" id="type" lay-filter="aihao">
+                            {% for type in types %}
+                            <option value="{{type.id}}">{{type.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <button class="layui-btn layui-btn-fluid" id="submit"> 立即提交</button>
+            </div>
+            <!-- formend -->
+
+            <!-- 上传 -->
+            <div >
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>拖拽上传</legend>
+                    </fieldset>
+
+                    <div class="layui-upload-drag" id="upload">
+                        <i class="layui-icon"></i>
+                        <p>点击上传，或将文件拖拽到此处</p>
+                    </div>
+            </div>
+
+             <!-- 上传结束 -->
+        </div>
+    </div>
+
+
+
+
+</div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+
+<script type="text/javascript" src="/static/ckeditor5/ckeditor.js"></script>
+<script type="text/javascript" src="/static/ckeditor5/translations/zh-cn.js"></script>
+<script type="text/javascript" src="/static/ckeditor5/my_ck_config.js"></script>
+
+
+
+<script>
+
+    // //加载动画
+    // var ii = layer.load();
+    // setTimeout(function () {
+    //     layer.close(ii);
+    // }, 1000);
+    //提交文章函数
+    function post(){
+        $.ajax({
+            type: "POST",
+            url: $SCRIPT_ROOT + "/admin/update-blog/"+$('#article_id').val(),
+            data: JSON.stringify({
+                "title": $("#title").val(),
+                "type": $("#type").val(),
+                "body_origin": editor.getData()
+            }),
+            dataType: "json",
+            success: function (response) {
+                if (response.status = "200") {
+                    window.location.href = $SCRIPT_ROOT + "/admin/draft"
+                } else {
+                    alert('error')
+                }
+
+            }
+        });
+    }
+
+    function get_token(){
+            $.ajax({
+                type: "POST",
+                url: $SCRIPT_ROOT + "/admin/get-token",
+                dataType: "json",
+                success: function (data) {
+                    $Token = data
+                }
+            });
+    }
+
+    $Token = {};
+    get_token();  //文档加载完毕自动获取一个token
+    $filename = ''
+    layui.use('upload', function(){
+            upload = layui.upload;
+            upload.render({
+                elem: '#upload',
+                url: $Token['url_prefix'],
+                data:{
+                    'OSSAccessKeyId':$Token['accessid'],
+                    'policy': $Token['policy'],
+                    'Signature': $Token['signature'],
+                    'callback': $Token['callback'],
+                    'key':$Token['dir']+'/'+'test'+$filename,
+                    'success_action_status': 200
+                },
+                before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                    obj.preview(function(index, file, result){
+                        $filename = file.name
+                        // $Authorization = "OSS " + $Signal['accessid'] + ":" +$Signal['signal']
+                 });
+                },
+                done: function(res, index, upload){ //上传后的回调
+
+                }
+                //,accept: 'file' //允许上传的文件类型
+                //,size: 50 //最大允许上传的文件大小
+                //,……
+            })
+    });
+
+
+    $(document).ready(function () {
+        function window_size(){
+            $("#files").css({"height":$(".left-nav").height()-60,"overflow-y":"scroll","padding-top":"20px"});
+            $("#posts").css({"height":$("#files").height(),"overflow-y":"scroll"})
+
+        }
+
+        window_size() //初始化窗口大小
+        $(window).resize(function () { window_size() });
+        $("#editor").focus()
+
+        $("#submit").click(function () {
+
+                if ($("#title").val() == '') {
+                    layer.msg('请输入标题')
+                    return
+                }
+                if (editor.getData() == '') {
+                    layer.open({
+                        content: '输入内容为空,确定提交吗?',
+                        btn: ['确认', '取消'],
+                        yes: function (index, layero) {
+                            post()
+                        },
+                        btn2: function (index, layero) {
+                        }
+                    });
+                    return
+                }else{
+                    layer.open({
+                        content: '确定提交吗?',
+                        btn: ['确认', '取消'],
+                        yes: function (index, layero) {
+                            post()
+                        },
+                        btn2: function (index, layero) {
+                        }
+                    });
+                }
+            });
+
+    });
+</script>
+{% endblock %}

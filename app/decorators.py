@@ -9,7 +9,8 @@ def permission_required(permission):
         @wraps(f)
         def decorated_funtion(*args, **kwargs):
             if not current_user.can(permission):
-                return redirect(url_for('admin.admin_login'))
+                # return redirect(url_for('admin.admin_login'))
+                abort(403)
             return f(*args, **kwargs)
         return decorated_funtion
     return decorator

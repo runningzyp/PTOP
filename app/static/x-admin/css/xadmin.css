@@ -392,13 +392,7 @@ xblock{
     background: #EFEEF0 url() 0 0 no-repeat;
     margin: 0px;
 }
-.page-content .layui-tab-title{
-    /*padding-top: 5px;*/
-    height: 35px;
-    background: #EFEEF0 url() 0 0 no-repeat;
-    position: relative;
-    z-index: 100;
-}
+
 .page-content .layui-tab-title li.home i{
     padding-right: 5px;
 }
@@ -421,20 +415,7 @@ xblock{
     height:34px;
     line-height: 35px;
 }
-.page-content .layui-tab-content{
-    position: absolute;
-    top: 36px;
-    bottom: 0px;
-    width: 100%;
-    background: #fff url() 0 0 no-repeat;
-    padding: 0px;
-    overflow: hidden;
-}
-.page-content .layui-tab-content .layui-tab-item{
-    width: 100%;
-    height: 100%;
-    
-}
+
 .page-content .layui-tab-content .layui-tab-item iframe{
     width: 100%;
     height: 100%;
@@ -606,7 +587,7 @@ table th, table td {
     font-size: 14px;
 }
 .x-admin-sm .layui-tab-title li{
-    font-size: 12px;
+    font-size: 14px;
 }
 .x-admin-sm .layui-icon{
     font-size: 14px;

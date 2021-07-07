@@ -1,39 +1,60 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% block title %}退出登录{% endblock %}
+{% block title %}登录{% endblock %}
+{% block styles %}
+{{super()}}
+<style>
+    .layui-input-inline{
+        margin-left: 30px;
+    }
+    .layui-input{
+        background-color: #fff0;
+    }
+</style>
+{% endblock %}
 
-{% block page_content %}
-<div class="page-header">
-    <img src="../../static/img/aqua.jpg" alt="..."  class="center-block img-circle"  width="100px">
+{% block main %}
+<div class="layui-col-md8 layui-col-md-offset2">
+
+    <img src="/static/img/aqua.jpg" alt="..."  style="border-radius: 50% ; display: block;margin-left: auto;
+    margin-right: auto;" width="110px" height="110px">
     <h1 style="text-align: center">管理员登录</h1>
 
-</div>
 
 
-<div class="row clearfix">
-    <div class="col-xs-2 column">
-    </div>
-    <div class="col-xs-8 column">
+
         
             {% if current_user.is_authenticated %}
             <p style="text-align: center">您已登录,<a href="{{url_for('main.userlogout')}}"> 退出登录</a></p>
             {% else %}
-            <form action="" method="post" class="form" role="form">
-                    <!-- {{ wtf.quick_form(form) }} -->
-                    {{ form.hidden_tag() }}
-                    {{ wtf.form_field(form.email,class= "form-control") }}
-                    {{ wtf.form_field(form.password,class= "form-control") }}
-                    <!-- {{ form.submit(class_="form-control btn-primary btn-block") }} -->
-                    {{ wtf.form_field(form.remember_me,class= "form-control") }}
-                    {{ wtf.form_field(form.submit, class="form-control btn btn-primary btn-block") }}
+            <form class="layui-form" action="" method="POST" id = "form"> 
+                    <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="email" id= 'email' lay-verify="email" autocomplete="off" class="layui-input">
+                            </div>
+                    </div>
+                   
+                    <div class="layui-form-item">
+                            <label class="layui-form-label">密码</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="password"  required lay-verify="pass" autocomplete="off" class="layui-input">
+                            </div>
+                    </div>
+                    <div class="layui-form-item">
+                            <label class="layui-form-label">记住我</label>
+                            <div class="layui-input-block">
+                              <input type="checkbox" name="switch" lay-skin="switch">
+                    </div>
+                
+                    <div class="layui-form-item">
+                            <div class="layui-input-block">
+                              <button class="layui-btn" lay-filter="*"  lay-submit="">立即提交</button>
+                              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                    </div>
             </form>
             {% endif %}
         
     </div>
-    <div class="col-xs-2 column">
-    </div>
-</div>
 
-    
-</div>
 {% endblock %}

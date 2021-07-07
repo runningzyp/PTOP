@@ -1,0 +1,97 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}阿里云设置{% endblock %}
+{% block tab_title %}oss配置{% endblock %}
+
+
+{% block page %}
+<div class="layui-col-md8">
+<div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+        {% for config in configs %}
+            {% if loop.index ==1 %}
+            <li class="layui-this">{{config.config_name}}</li>
+            {% else %}
+            <li>{{config.config_name}}</li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+        <div class="layui-tab-content">
+        {% for config in configs %}
+          <div class="layui-tab-item {% if loop.index ==1 %}layui-show{% endif %}">
+                <form class="layui-form" action="" id = "{{config.id}}">
+                        <input type="text" name="id" class="layui-hide" lay-verify="required" value="{{config.id}}" autocomplete="off" class="layui-input">
+
+                        <div class="layui-form-item">
+                                <label class="layui-form-label">Key_Id</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="access_key_id" required  lay-verify="required" value="{{config.access_key_id}}" autocomplete="off" class="layui-input">
+                                </div>
+                         </div>
+                        <div class="layui-form-item">
+                                <label class="layui-form-label">Key_Secret</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="access_key_secret" required  lay-verify="required" value="{{config.access_key_secret}}" autocomplete="off" class="layui-input">
+                                </div>
+                         </div>
+                         <div class="layui-form-item">
+                                <label class="layui-form-label">Host</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="host" required  lay-verify="required" value="{{config.host}}" autocomplete="off" class="layui-input">
+                                </div>
+                         </div>
+                         <div class="layui-form-item">
+                                <label class="layui-form-label">Bucket</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="bucket" required  lay-verify="required" value="{{config.bucket}}" autocomplete="off" class="layui-input">
+                                </div>
+                         </div>
+                         <div class="layui-form-item">
+                                <label class="layui-form-label">Callback_url</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="callback_url" required  lay-verify="required" value="{{config.callback_url}}" autocomplete="off" class="layui-input">
+                                </div>
+                         </div>
+                         <div class="layui-form-item">
+                                <label class="layui-form-label">Expire_time</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="expire_time" required  lay-verify="required" value="{{config.expire_time}}" autocomplete="off" class="layui-input">
+                                </div>
+                         </div>
+                         <div class="layui-form-item">
+                                <label class="layui-form-label">Url_prefix</label>
+                                <div class="layui-input-block">
+                                  <input type="text" name="url_prefix" required  lay-verify="required" value="{{config.url_prefix}}" autocomplete="off" class="layui-input">
+                                  <div class="layui-form-mid layui-word-aux">必须以 "/" 结尾</div>
+                                </div>
+                         </div>
+                         <button class="layui-btn layui-btn-fluid submit" type = "button" >提交</button>
+                </form>
+
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+{% endblock %}
+          
+ 
+{% block scripts %}
+{{super()}}
+<script>
+$(".submit").click(function(){
+    var form = $(this).closest("form")
+    var data = form.serialize();
+    $.ajax({
+        type: "post",
+        url: $SCRIPT_ROOT+"/admin/ali-settings",
+        data:data,
+        success: function (response) {
+            
+        }
+    });
+  
+
+})
+</script>
+
+{% endblock %}

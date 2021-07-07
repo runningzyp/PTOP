@@ -1,0 +1,196 @@
+{% extends "admin/base_admin.html" %}
+{% block title%} 文章管理 {% endblock %}
+{% block styles %}
+{{super()}}
+<style>
+        /* 防止下拉框的下拉列表被隐藏---必须设置--- */
+        /* .layui-table-cell { overflow: visible !important; } */
+       /* 使得下拉框与单元格刚好合适 */
+       td .layui-form-select{
+       margin-top: -10px;
+       margin-left: -15px;
+       margin-right: -15px;
+       }
+</style>
+{% endblock %}
+
+{% block tab_title %}文章列表{% endblock %} 
+
+{% block page_content %}
+
+    <table id="demo" lay-filter="test"></table>
+
+{% endblock %}
+          
+ 
+
+{% block scripts %}
+{{super()}}
+   <!-- 模板引擎 -->
+   
+   {% raw %}
+   <script type="text/html" id="LineBar">
+       <a class="layui-btn layui-btn-sm layui-btn-primary" href = "{{ d.url }}",lay-event="detail">查看</a>
+       <a class="layui-btn layui-btn-sm " lay-event="edit">编辑</a>
+       <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+   </script>
+     
+     <script type="text/html" id="zizeng">
+       {{d.LAY_TABLE_INDEX+1}}
+    </script>
+   {% endraw %}
+   <script type="text/html" id="TopBar">
+        <!-- <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div> -->
+        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+  </script>
+
+   <script>
+   layui.use('table', function(){
+    var table = layui.table;
+    
+    //第一个实例
+    var table_first = table.render({
+        elem: '#demo'
+        // ,height: 312
+        ,url: $SCRIPT_ROOT+'/admin/blogs'//数据接口
+        ,method: 'post'
+        ,contentType: 'application/json'
+        ,page: true //开启分页
+        ,id:'testReload'
+        ,even: true //开启隔行背景
+        ,toolbar: '#TopBar'
+        ,title:"文章表格"
+        ,cols: [[ //表头
+            {type:'checkbox'}
+            // ,{field:'zizeng', width:80, title: '序号',sort:true,templet:'#zizeng'}
+            ,{field:'zizeng', width:80, title: '序号',type:'numbers',}
+            ,{field: 'id', title: '文章序号', hide: true,width:80}
+            ,{field: 'title', title: '标题',}
+            ,{field: 'finish_time', title: '完成时间', width:'20%',
+                    templet :function (row){
+                        return createTime(row.finish_time);
+                        }}
+            ,{field: 'last_change_time', title: '修改时间', width:'20%',
+                    templet :function (row){
+                            return createTime(row.last_change_time);
+                        }}
+            // ,{field: 'type_id', title: '类型号', width:80}
+            ,{field: 'type_name', title: '类型', width:140}
+            ,{field:'right', title: '操作', width:177,toolbar: '#LineBar'}
+            ]]
+        ,request: {
+        pageName: 'page' //页码的参数名称，默认：page
+        ,limitName: 'limit' //每页数据量的参数名，默认：limit
+        }
+        ,response: {
+            statusName: 'status' //数据状态的字段名称，默认：code
+            ,statusCode: 200 //成功的状态码，默认：0
+            ,msgName: 'msg' //状态信息的字段名称，默认：msg
+            ,countName: 'count' //数据总数的字段名称，默认：count
+            ,dataName: 'data' //数据列表的字段名称，默认：data
+        }
+        ,parseData: function(res){ //res 即为原始返回的数据
+            return {
+            "status": res.status, //解析接口状态
+            "msg": res.message, //解析提示文本
+            "count": res.count, //解析数据长度
+            "data": res.data //解析数据列表
+            };
+        }
+        });
+         /* 第一个实例结束 */
+
+         
+            //监听每一行的工具条
+            table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+                if(layEvent === 'del'){ //删除                    
+                    layer.confirm('此操作会放入回收站,你可以在回收站恢复', function(index){
+                        var delArray = new Array()
+
+                        //添加删除的 id
+                        delArray.push(data['id'])
+                        //向服务端发送回收站指令
+                        $.ajax({
+                            type: "POST",
+                            url: $SCRIPT_ROOT+'/admin/manage-blogs',
+                            data: JSON.stringify({
+                                "operation":"recycle",
+                                "objects":delArray,
+                            }),
+                            dataType: "json",
+                            contentType:"application/json",
+                            success: function (response) {
+                                if (response.status ==200){
+                                     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                     layer.close(index);
+                                     layer.msg(response.message,{time:5000})
+                                }
+                            }
+                        });
+                    });
+                }else if(layEvent === 'edit'){ //编辑
+                    layer.confirm('确定编辑吗?', function(index){
+                        window.location.href = ("../admin/update-blog/"+data['id']);
+                    });
+                }
+            });
+
+            //监听顶部工具条
+            table.on('toolbar(test)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id);
+                        switch(obj.event){
+                            // case 'add':
+                            // layer.msg('添加');
+                            // // console.log(checkStatus)
+                            // if (checkStatus.isAll)
+                            // {
+                            //     console.log(checkStatus.data[0].id)
+                            // }
+                            // break;
+                        case 'delete':
+                    //判断选择对象不为空才进行操作
+                    console.log(checkStatus.data)
+                        if (checkStatus.data.length!=0){
+                            layer.confirm('此操作会放入回收站,你可以在回收站恢复', function(index){     
+                                    var delArray = new Array()
+                                    console.log(checkStatus.data)
+                                    for(i = 0,len=checkStatus.data.length; i < len; i++) {
+                                        delArray.push(checkStatus.data[i].id)
+                                    }
+                                    $.ajax({
+                                            type: "POST",
+                                            url: $SCRIPT_ROOT+'/admin/manage-blogs',
+                                            data: JSON.stringify({
+                                                "operation":"recycle",
+                                                "objects":delArray,
+                                            }),
+                                            dataType: "json",
+                                            contentType:"application/json",
+                                            success: function (response) {
+                                                if (response.status ==200){
+                                                    table_first.reload()
+                                                    layer.close(index);
+                                                    layer.msg(response.message,{time:5000})
+                                                }
+                                            }
+                                        });
+                                })
+                        }else{
+                            layer.msg('没有选中任何项目')
+                        }
+                        break;
+                    };
+                
+            });
+    })
+   
+   
+   </script>
+
+{% endblock %}
+ 
+

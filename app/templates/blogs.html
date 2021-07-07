@@ -11,19 +11,21 @@
 <link rel="icon" href="/static/ico/my.ico" type="image/x-icon">
 <link rel="stylesheet" type="text/css" href="/static/css/blogcss/default.css" />
 <link rel="stylesheet" type="text/css" href="/static/css/blogcss/component.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/blogcss/blogs.css" />
+
 <link rel="stylesheet" href="static/x-admin/lib/layui/css/layui.css">
 <!-- <script src="/static/js/modernizr.custom.js"></script> -->
 
 <style>
-
-    .layui-laypage-prev, .layui-laypage-next{
+    .layui-laypage-prev,
+    .layui-laypage-next {
         float: left;
         left: 135px;
         bottom: 36.5px;
         height: 20px;
         position: relative;
         margin: initial;
-        line-height:normal  ;
+        line-height: normal;
         background-color: #FC756F;
         border: none;
         color: #fff;
@@ -34,18 +36,19 @@
         text-transform: uppercase;
         cursor: pointer;
         margin-right: 4px;
-        box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
-        visibility:visible;
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+        visibility: visible;
     }
-   
-  .layui-disabled {
-    color: #d2d2d2 ;
-    cursor: not-allowed ;
-}
 
+    .layui-disabled {
+        color: #d2d2d2;
+        cursor: not-allowed;
 
- 
+    }
 
+    .paper a:hover {
+        color: red;
+    }
 </style>
 </head>
 
@@ -61,7 +64,7 @@
 		<nav class="codrops-demos">
 			<!-- <a class="current-demo" href="">文本模式</a> -->
 			<a href="{{url_for('main.about')}}">关于我</a>
-			<a id = 'change-back' href="#">更换壁纸</a>
+			<a id = 'change-back' href="#">博客</a>
 		</nav>
 		<span class="support-note">欢迎来到香菜的博客</span>
 	</header>
@@ -94,16 +97,17 @@
 					</div>
 					<div class="bk-page">
 
-						<div class="bk-content" id = 'book3'>
+                            <div class="paper">
+                                    <div class="lines">
+                                      <div class="text" id= "funny" contenteditable ="false" spellcheck="false">
 
-							<div  class="title">
-							
-								</div>
-							<div class="content">
 
-							</div>	
-
-						</div>
+                                     </div>
+                                    </div>
+                                    <div class="holes hole-top"></div>
+                                    <div class="holes hole-middle"></div>
+                                    <div class="holes hole-bottom"></div>
+                                  </div>
 					
 
 					</div>
@@ -163,15 +167,16 @@
 						</div>
 					</div>
 					<div class="bk-page">
-							<div class="bk-content" id = 'book1'>
-									<div  class="title">
-
-									</div>	
-									<div  class="content">
-
-                                    </div>	
-
-								</div>
+                            <div class="paper">
+                                    <div class="lines">
+                                      <div class="text" id = "study" contenteditable ="false" spellcheck="false">
+                                      
+                                     </div>
+                                    </div>
+                                    <div class="holes hole-top"></div>
+                                    <div class="holes hole-middle"></div>
+                                    <div class="holes hole-bottom"></div>
+                            </div>
 				
 					</div>
 					<div class="bk-back">
@@ -229,17 +234,16 @@
 						</div>
 						<div class="bk-page">
 							
-								<div class="bk-content" id = 'book2'>
-
-										<div  class="title">
-
-										</div>	
-											
-										<div  class="content">
-
+                                <div class="paper">
+                                        <div class="lines">
+                                          <div class="text" id= "essay" contenteditable ="false" spellcheck="false">
+                                         
                                         </div>
-
-									</div>
+                                        </div>
+                                        <div class="holes hole-top"></div>
+                                        <div class="holes hole-middle"></div>
+                                        <div class="holes hole-bottom"></div>
+                                </div>
 						</div>
 						<div class="bk-back">
 							<img src="../static/img/book_image/33.png" alt="cat" />
@@ -279,31 +283,18 @@
 
 <script src="/static/js/jquery-1.11.1.js"></script>
 <script src="/static/js/books1.js"></script>
+<script type="text/javascript" size="150" alpha='0.3' zIndex="-2" src="/static/js/ribbon.min.js"></script>
+
 <script src="/static/x-admin/lib/layui/layui.js"></script>
 <script>
 
     var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
      counts = {{counts}}
 
-     $(document).ready(function () {
-        var i = 1;
-        $("#change-back").click(function () {
 
-                if (i < 10) {
-                    $("body").css({
-                        "background-image": "url('/static/blog_back/" + i + ".png')"
-                    });
-                    i++;
-                } else {
-                    i = 1;
-                }
-            });
-            
-        })
 
 	$(function () {
         Books.init();
-        
 
     }); 
 
@@ -322,12 +313,12 @@
         laypage.render({
             elem: 'page3',
             count: counts[2],
-            limit:1,
+            limit:5,
             layout: ['prev', 'next'],
             jump: function(obj, first){
                 $.ajax({
                     method: "POST",
-                    url: $SCRIPT_ROOT+"blogs",
+                    url: $SCRIPT_ROOT+"/blogs",
                     data: JSON.stringify({
                         "page":obj.curr,
                         "type":3
@@ -336,8 +327,14 @@
                     dataType: "json",
                     success: function (res) {
                         if (res.status =='200'){
-                        $("#book3 .title").html("<a href='"+res['data'].url+"'>"+res['data'].title+"</a>")
-                        }
+                                var htm = "";
+                                for (i= 0; i<res.data.length;i++){
+                                    text = "<a href ='"+res.data[i].url+"'><p>"+(i+1) +"  " +res.data[i].title+"</p></a></br>"; 
+                                    htm += text;
+                                }  
+                                $("#essay").html(htm);
+                            }
+                            
                     }
                 });
             if(!first){
@@ -352,21 +349,27 @@
             laypage.render({
                 elem: 'page2',
                 count: counts[1],
-                limit:1,
+                limit:5,
                 layout: ['prev', 'next'],
                 jump: function(obj, first){
                     $.ajax({
                         method: "POST",
-                        url: $SCRIPT_ROOT+"blogs",
+                        url: $SCRIPT_ROOT+"/blogs",
                         data: JSON.stringify({
                             "page":obj.curr,
                             "type":2
                         }),
                         dataType: "json",
                         success: function (res) {
-                            if (res.status =='200')
-                            $("#book2 .title").html("<a href='"+res['data'].url+"'>"+res['data'].title+"</a>")
-
+                            if (res.status =='200'){
+                                var htm = "";
+                                for (i= 0; i<res.data.length;i++){
+                                    text = "<a href ='"+res.data[i].url+"'><p>"+(i+1) +"  " +res.data[i].title+"</p></a></br>"; 
+                                    htm += text;
+                                }  
+                                $("#essay").html(htm);
+                            }
+                            
                         }
                     });
 
@@ -380,20 +383,27 @@
                 laypage.render({
                     elem: 'page1',
                     count: counts[0],
-                    limit:1,
+                    limit:5,
                     layout: ['prev', 'next'],
                     jump: function(obj, first){
                         $.ajax({
                             method: "POST",
-                            url: $SCRIPT_ROOT+"blogs",
+                            url: $SCRIPT_ROOT+"/blogs",
                             data: JSON.stringify({
                                 "page":obj.curr,
                                 "type":1
                             }),
                             dataType: "json",
                             success: function (res) {
-                                if (res.status =='200')
-                                $("#book1 .title").html("<a href='"+res['data'].url+"'>"+res['data'].title+"</a>")
+                                if (res.status =='200'){
+                                var htm = "";
+                                for (i= 0; i<res.data.length;i++){
+                                    text = "<a href ='"+res.data[i].url+"'><p>"+(i+1) +"  " +res.data[i].title+"</p></a></br>"; 
+                                    htm += text;
+                                }  
+                                $("#study").html(htm);
+                            }
+                            
 
                             }
                         });

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}{{blog.title}}{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            width: 100%;
+            font-size: 16px;
+            background-color: #fff;
+            line-height: 2em;
+            background-image: url("/static/blog_back/7.png")
+
+        }
+        hr{
+            border-top: 1px solid #c3b3b3   
+        }
+
+        .paper {
+            padding: 20px 40px;
+
+            background-color:#F0F0F0;
+
+            position: relative;
+            border: 6px solid #fff;
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+
+        }
+
+@media only screen and (max-width: 600px) {
+    .paper {
+            width: 100%;
+            padding: 20px 0px;
+            background-color: #fff;
+            
+        }
+       
+        img{
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin-right: auto;
+            margin-left: auto;
+        }
+}
+
+
+@media only screen and (min-width: 768px) {
+        .paper-before{
+
+            content: "";
+            height: 100%; width:100%;
+            background: #eff4de;
+            border: 6px solid #fff;
+            position: absolute;
+            z-index: -2;
+            top: 0px;
+            left: 0px;
+
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+
+
+        }
+        .paper-after{
+            content: "";
+            height: 100%; width: 100%;
+            background: lightblue;
+            border: 6px solid #fff;
+            position: absolute;
+            z-index: -1;
+            top: 0px;
+            left: 0px;
+            -webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            -moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+
+        }
+
+    } 
+/* media end */
+ 
+    </style>
+
+{% endblock %}
+
+
+{% block main %}
+            
+            <div class="layui-col-md9">
+                <div id = "cover" class="invisible">
+                <div class="paper-before"></div>
+                <div class="paper">
+                    
+                    <h1 >{{blog.title}}</h1>
+                    <!-- 博客文章从这开始 -->
+                    <div name = "textarea" id="editor">
+                            {{blog.body_origin|safe}}
+                        </div>
+                    <!-- 到这结束 -->
+                </div>
+                <div class="paper-after"></div>
+            </div>
+            </div>            
+
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+    <script src="/static/ckeditor5/ckeditor.js"></script>
+
+    <script type="text/javascript">
+        $(".paper h1,h2,h3,h4").after("<hr>")
+
+        $('.paper-before').css("transform", "rotate"+"("+get_deg(40,".paper-before")+"deg"+")")
+        $('.paper-after').css("transform", "rotate"+"("+get_deg(20,".paper-after")+"deg"+")")
+
+        ClassicEditor
+            .create(document.querySelector('#editor'),{
+
+            })
+            .then(editor => {
+                editor.isReadOnly = true; //将编辑器设为只读
+            })
+    
+            .catch(error => {
+                console.error(error);
+            });            
+        $(document).ready(function () {
+            $('#cover').removeClass('invisible')     
+        });
+
+        function get_deg(para,div) {
+            var x = para
+            var totla_x	
+            var $height = $(div).outerHeight()
+            var $width = $(div).outerWidth()
+
+            totla_x = x + ($width/2)
+            c = Math.sqrt($width*$width+$height*$height)/2
+            sinx = totla_x/c //余弦值
+            deg = 180/Math.PI * Math.acos(sinx) //通过余弦值求角度
+            deg2 = 180/Math.PI * Math.asin($width/2/c)//通过余弦值求角度
+
+            deg3 = 90-deg -deg2//最终角度
+            return deg3
+          }
+    
+        
+
+
+        
+    </script>
+
+{% endblock %}

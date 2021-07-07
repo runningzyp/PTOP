@@ -1,3 +1,4 @@
+ 
 class MyUploadAdapter {
     constructor( loader ) {
       // Save Loader instance to update upload progress.
@@ -10,9 +11,9 @@ class MyUploadAdapter {
                 const data = new FormData();
                 data.append( 'image', uploadedFile );
                 data.append('type','image')
-    
+                
                 axios( {
-                    url: $SCRIPT_ROOT+"admin/upload-blog-image",
+                    url: $SCRIPT_ROOT+"/admin/upload-blog-image",
                     method: 'post',
                     data,
                     headers: {
@@ -41,34 +42,27 @@ class MyUploadAdapter {
       // Reject promise returned from upload() method.
     }
   }
-//   $SCRIPT_ROOT+"admin/upload-blog-image"
 
-DecoupledEditor
+ClassicEditor
 .create(document.querySelector('#editor'),{
     
-    viewportTopOffset : 50,  
     toolbar: {
-        items: ["heading",  "|", "bold", "italic", "underline", "strikethrough", "highlight", "|", "alignment", "|", "numberedList", "bulletedList", "|", "link", "blockquote", "imageUpload", "insertTable", "mediaEmbed", "|", "undo", "redo"]
+        viewportTopOffset : 50,    
+        items: ["heading",  "|", "bold", "italic", "underline", "strikethrough", "highlight", "|", "alignment", "|", "numberedList", "bulletedList", "|", "link","pre","code", "blockquote", "imageUpload", "insertTable", "mediaEmbed", "|", "undo", "redo"]
     },
-
-     ckfinder: {
-        // Upload the images to the server using the CKFinder QuickUpload command.
-        uploadUrl: "http://127.0.0.1:5000/admin/img"
-    }, 
-  
     image: {
     // You need to configure the image toolbar, too, so it uses the new style buttons.
-    toolbar: [   'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight','|','imageTextAlternative' ],
+    toolbar: [ 'imageTextAlternative' ],
     styles: [
         // This option is equal to a situation where no style is applied.
         'full',
 
-        // This represents an image aligned to the left.
-        'alignLeft',
+            // This represents an image aligned to the left.
+            'alignLeft',
 
-        // This represents an image aligned to the right.
-        'alignRight'
-    ]
+            // This represents an image aligned to the right.
+            'alignRight'
+        ]
  },
 
  language: 'zh-cn',
@@ -78,17 +72,15 @@ DecoupledEditor
     
       const toolbarContainer = document.querySelector('#ck-toolbar');
 
-                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-
+         toolbarContainer.appendChild(editor.ui.view.toolbar.element);
                 // 加载了适配器
-    editor.plugins.get('FileRepository').createUploadAdapter = (loader)=>{
-        return new MyUploadAdapter (loader);
-    };
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader)=>{
+            return new MyUploadAdapter (loader);
+        };
+    
+   
 
     window.editor = editor;
-    // const toolbarContainer = document.querySelector( 'layui-footer' );
-
-    // toolbarContainer.appendChild( editor.ui.view.toolbar.element );
 } )
 
 
