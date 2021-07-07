@@ -8,7 +8,7 @@ from flask_login import login_user
 
 
 from .import auth
-from .. import db, redis_db
+from .. import db, redis_db,cache
 from ..utils import send_email
 
 from ..models import User
@@ -49,7 +49,7 @@ def register():
             flash("两次密码不同")
             return redirect(url_for('auth.register'))
 
-        ver_code = redis_db.get(email)
+        ver_code = cache.get(email)
         if 1:
             new_user = User(email=email, username=username,
                             userkey=userkey, password=password)
@@ -75,10 +75,10 @@ def get_code():
                 'status': 400,
                 'message': "邮箱已经被使用"
             })
-        ret = redis_db.get(email)
-        if ret is not None:
-            send_email.delay(email, '请检查您的验证码', 'auth/email/confirm',
-                             code=ret.decode('utf8'), email=email)
+        ret = cache.get(email)
+        if ret:
+            send_email.delay(email, '请再次检查您的验证码', 'auth/email/confirm',
+                             code=ret, email=email)
             return jsonify({
                 'status': 200,
                 'message': "发送成功,在您的邮箱查看验证码"
@@ -89,9 +89,7 @@ def get_code():
                 code = random_str()
                 send_email.delay(email, '请检查您的验证码', 'auth/email/confirm',
                                  code=code, email=email)
-                ret = redis_db.set(email, code)
-                ret = redis_db.expire(
-                    email, current_app.config['VERIFY_CODE_EXPIRE'])
+                ret = cache.set(email, code)
             except Exception as e:
                 print(e)
                 return jsonify({

@@ -104,12 +104,14 @@ $('#file-submit').click(function () {
 
         cache: false,
         processData: false, //不需要进行序列化处理
-        async: true, //发送同步请求
+        async: false, //发送同步请求
         contentType: false,
         success: function (result) {
             add_files(result)
         },
-        error: function () {
+        error: function (result) {
+            alert(result)
+            alert(result.data)
             alert("上传超时");
         }
     });

@@ -118,8 +118,7 @@ def user(username):
 def get_token():
     user_dir = current_user.email
     aliconfig = current_user.role.aliconfig
-    if request.method == 'POST':
-        return ali_oss.get_token(aliconfig, user_dir)
+    return ali_oss.get_token(aliconfig, user_dir)
 
 
 @main.route('/call-back', methods=['POST', 'GET'])

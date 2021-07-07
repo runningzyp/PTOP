@@ -36,13 +36,14 @@ class Config:
     FLASKY_ARTICLE_PER_PAGE = 1  # 每页显示数量
 
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+    RESULT_BACKEND = 'redis://localhost:6379/0' # celery 
 
     VERIFY_CODE_EXPIRE = 300  # 验证吗过期时间
     # gunicorn
     daemon = True
 
-    CELERYBEAT_SCHEDULE = {
+    # celery
+    BEAT_SCHEDULE = {
         # 定义任务名称：import_data
         # 执行规则：每天运行一次
         "clear_code": {
@@ -50,6 +51,13 @@ class Config:
             'schedule': crontab(minute=0, hour=0)
         }
     }
+
+    # flask-caching
+    CACHE_TYPE = "RedisCache"
+    CACHE_DEFAULT_TIMEOUT = 300
+    CACHE_REDIS_HOST = "localhost"
+    CACHE_REDIS_PORT = 6379
+    CACHE_REDIS_DB = 0
 
     @staticmethod
     def init_app(app):

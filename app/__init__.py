@@ -5,11 +5,15 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from config import config, Config
 from flask_login import LoginManager
+from flask_caching import Cache
 
 from celery import Celery  # 后台任务
 from redis import StrictRedis
 
+app = Flask(__name__)
 
+
+cache = Cache()
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
@@ -43,7 +47,7 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
-
+    cache.init_app(app)
     celery.conf.update(app.config)  # celery配置
 
     from .main import main as main_blueprint
