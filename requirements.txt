@@ -27,7 +27,7 @@ mysql-connector-python==8.0.11
 oss2==2.5.0
 pep8==1.7.1
 protobuf==3.5.2.post1
-pycryptodome==3.6.1
+pycryptodome==3.6.6
 PyMySQL==0.8.1
 python-dateutil==2.7.3
 python-editor==1.0.3
