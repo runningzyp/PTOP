@@ -8,7 +8,6 @@ from flask_login import LoginManager
 from flask_caching import Cache
 
 from celery import Celery  # 后台任务
-from redis import StrictRedis
 
 app = Flask(__name__)
 
@@ -19,27 +18,26 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 
-redis_db = StrictRedis(host='localhost', port=6379, db=1)
 celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)  # 创建celery实例
 
 
 login_manager = LoginManager()
-login_manager.session_protection = 'strong'
-login_manager.login_view = 'main.index'
+login_manager.session_protection = "strong"
+login_manager.login_view = "main.index"
 login_manager.login_message = "请登录后 访问此页."
 
 
 def filter_double_sort(ls):
-    return ls.split['/'][-1]
+    return ls.split["/"][-1]
 
 
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config["default"])
 
-    app.add_template_filter(filter_double_sort, 'last')
+    app.add_template_filter(filter_double_sort, "last")
 
-    app.config['BOOTSTRAP_SERVE_LOCAL'] = True  # 使用本地cdn
+    app.config["BOOTSTRAP_SERVE_LOCAL"] = True  # 使用本地cdn
     config[config_name].init_app(app)
 
     bootstrap.init_app(app)
@@ -51,9 +49,12 @@ def create_app(config_name):
     celery.conf.update(app.config)  # celery配置
 
     from .main import main as main_blueprint
+
     app.register_blueprint(main_blueprint)
     from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+
+    app.register_blueprint(auth_blueprint, url_prefix="/auth")
     from .admin import admin as admin_blueprit
-    app.register_blueprint(admin_blueprit, url_prefix='/admin')
+
+    app.register_blueprint(admin_blueprit, url_prefix="/admin")
     return app
