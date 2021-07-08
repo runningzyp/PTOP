@@ -1,5 +1,6 @@
 import json
 import os
+import io
 
 from flask import (
     request,
@@ -19,6 +20,8 @@ from werkzeug.utils import secure_filename
 from app.main import main
 from app import db
 from app.models import Article, ArticleType, Data, User, Comment
+from app.utils.ali_oss import get_bucket
+
 
 UPLOAD_FOLDER = "files"
 
@@ -136,22 +139,28 @@ def sendmessage():
 @main.route("/files", methods=["POST"])
 @login_required
 def sendfile():
+    file = request.files["file"]
+    user = User.query.filter_by(username=current_user.username).first()
+    key = user.email + "/" + file.filename
+
+    bio = io.BytesIO()
+    file.save(bio)
+
+    bucket = get_bucket()
     try:
-        file = request.files["file"]
-        filename = file.filename
-        sec_filename = secure_filename(filename)
-        user = User.query.filter_by(username=current_user.username).first()
-        persional_folder = f"{ROOT_DIR}/{UPLOAD_FOLDER}/{user.email}"
-        file.save(os.path.join(persional_folder, sec_filename))
-        data = Data(
-            filename=sec_filename,
-            filetype=file.mimetype,
-            owner=current_user._get_current_object(),
-        )
-        db.session.add(data)
+        bucket.put_object(key, bio.getvalue())
     except Exception:
-        file = None
-    return jsonify({"name": filename, "url": sec_filename})
+        url = None
+    else:
+        url = bucket.sign_url('GET', key, 3000)
+    data = Data(
+        filename=key,
+        filetype=file.mimetype,
+        owner=current_user._get_current_object(),
+    )
+    db.session.add(data)
+
+    return jsonify({"name": file.filename, "url": url})
 
 
 @main.route("/register")

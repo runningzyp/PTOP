@@ -5,16 +5,16 @@ from celery.schedules import crontab
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-with open("config.json", 'r')as f:
+with open("config.json", "r") as f:
     flag = json.loads(f.read())
 dev_env = flag["dev"]
-pro_env = flag['pro']
-admin = flag['admin']
-curr_secret_key = flag['secret_key']
-mail_username = flag['mail_username']
-mail_password = flag['mail_password']
-mail_port = flag['mail_port']
-mail_server = flag['mail_server']
+pro_env = flag["pro"]
+admin = flag["admin"]
+curr_secret_key = flag["secret_key"]
+mail_username = flag["mail_username"]
+mail_password = flag["mail_password"]
+mail_port = flag["mail_port"]
+mail_server = flag["mail_server"]
 
 
 class Config:
@@ -29,14 +29,14 @@ class Config:
     MAIL_USE_TLS = False
     MAIL_USERNAME = mail_username
     MAIL_PASSWORD = mail_password
-    FLASKY_MAIL_SUBJECT_PREFIX = '[香菜花]'
+    FLASKY_MAIL_SUBJECT_PREFIX = "[香菜花]"
     FLASKY_MAIL_SENDER = mail_username
     FLASKY_ADMIN = admin
     UPLOAD_FOLDER = os.getcwd() + "/files/"  # 用户上传目录
     FLASKY_ARTICLE_PER_PAGE = 1  # 每页显示数量
 
-    CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    RESULT_BACKEND = 'redis://localhost:6379/0' # celery 
+    CELERY_BROKER_URL = "redis://localhost:6379/0"
+    RESULT_BACKEND = "redis://localhost:6379/0"  # celery
 
     VERIFY_CODE_EXPIRE = 300  # 验证吗过期时间
     # gunicorn
@@ -47,8 +47,8 @@ class Config:
         # 定义任务名称：import_data
         # 执行规则：每天运行一次
         "clear_code": {
-            'task': 'clear_verify_code',
-            'schedule': crontab(minute=0, hour=0)
+            "task": "clear_verify_code",
+            "schedule": crontab(minute=0, hour=0),
         }
     }
 
@@ -66,17 +66,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    '''
+    """
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
         os.path.join(basedir, 'data-dev.sqlite')
-    '''
+    """
     SQLALCHEMY_DATABASE_URI = dev_env
 
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "TEST_DATABASE_URL"
+    ) or "sqlite:///" + os.path.join(basedir, "data-test.sqlite")
 
 
 class ProductionConfig(Config):
@@ -84,9 +85,8 @@ class ProductionConfig(Config):
 
 
 config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-
-    'default': DevelopmentConfig
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig,
+    "default": DevelopmentConfig,
 }

@@ -17,3 +17,4 @@ venv
 migrations/
 ali_config.json
 config.json
+.mypy_cache/
